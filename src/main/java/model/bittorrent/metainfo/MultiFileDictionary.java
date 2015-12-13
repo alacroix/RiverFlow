@@ -49,7 +49,8 @@ public class MultiFileDictionary extends AbstractInfoDictionary {
 		this(name, pieceLength, pieces, files, null);
 	}
 
-	public MultiFileDictionary(String name, Integer pieceLength, String pieces, List<FileKeys> files, Integer privateTracker) {
+	public MultiFileDictionary(String name, Integer pieceLength, String pieces, List<FileKeys> files,
+	                           Integer privateTracker) {
 		super(name, pieceLength, pieces, privateTracker);
 		this.files = files;
 	}
