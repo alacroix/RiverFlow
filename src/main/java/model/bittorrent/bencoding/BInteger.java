@@ -18,8 +18,19 @@ public class BInteger implements BType {
 		this.value = (value != null ? value : 0);
 	}
 
+	public Integer getValue() {
+		return value;
+	}
+
 	@Override
 	public String getBencodedValue() {
 		return "i" + value + "e";
+	}
+
+	public static BInteger read(String content, Integer index) {
+		final int indexEnd = content.indexOf('e', index);
+		final int value = Integer.valueOf(content.substring(index + 1, indexEnd));
+
+		return new BInteger(value);
 	}
 }
