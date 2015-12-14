@@ -27,4 +27,22 @@ public class BStringTest {
 		BType t = new BString(null);
 		Assert.assertEquals("0:", t.getBencodedValue());
 	}
+
+	@Test
+	public void testRead() throws Exception {
+		String value = "3:foo";
+		BString s = BString.read(value, 0);
+		Assert.assertEquals(value, s.getBencodedValue());
+		Assert.assertEquals("foo", s.getValue());
+
+		value = "10:abcdefghij";
+		s = BString.read(value, 0);
+		Assert.assertEquals(value, s.getBencodedValue());
+		Assert.assertEquals("abcdefghij", s.getValue());
+
+		value = "0:";
+		s = BString.read(value, 0);
+		Assert.assertEquals(value, s.getBencodedValue());
+		Assert.assertEquals("", s.getValue());
+	}
 }

@@ -15,8 +15,23 @@ public class BString implements BType {
 		this.value = (value != null ? value : "");
 	}
 
+	public String getValue() {
+		return value;
+	}
+
 	@Override
 	public String getBencodedValue() {
 		return value.length() + ":" + value;
+	}
+
+	public static BString read(String content, final Integer index) {
+		final int sepIndex = content.indexOf(':', index);
+		final int length = Integer.valueOf(content.substring(index, sepIndex));
+		String value = null;
+		if (length != 0) {
+			value = content.substring(sepIndex + 1, sepIndex + 1 + length);
+		}
+
+		return new BString(value);
 	}
 }
