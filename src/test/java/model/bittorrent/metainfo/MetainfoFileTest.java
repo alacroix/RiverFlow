@@ -15,16 +15,9 @@ public class MetainfoFileTest {
 
 	private final static String RESOURCES_PATH = "src/test/resources/torrent_files/";
 
-	/**
-	 * https://archive.org/details/amusementsinmath16713gut
-	 *
-	 * @throws Exception
-	 */
 	@Test
-	public void testProjetGutenberg() throws Exception {
-		//Path file = Paths.get(RESOURCES_PATH, "No Game No Life.torrent");
-		Path file = Paths.get(RESOURCES_PATH, "6d600b5f36d25504b4538323f8084d35.torrent");
-		//Path file = Paths.get(RESOURCES_PATH, "The Unforseeable Fate Of Mr. Jones.torrent");
+	public void testBitTorrentFile() throws Exception {
+		Path file = Paths.get(RESOURCES_PATH, "The Unforseeable Fate Of Mr. Jones.torrent");
 
 		Reader.readTorrentFile(file);
 	}
