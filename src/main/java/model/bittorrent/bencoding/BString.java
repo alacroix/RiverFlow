@@ -25,23 +25,6 @@ public class BString implements BType {
 		return value;
 	}
 
-	/*
-	@Override
-	public byte[] getBencodedValue() {
-		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-		ByteBuffer buffer = ByteBuffer.allocate(4);
-		buffer.putInt(value.length);
-		try {
-			outputStream.write(buffer.array());
-			outputStream.write(':');
-			outputStream.write(value);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return outputStream.toByteArray();
-	}
-	*/
-
 	@Override
 	public String getBencodedValue() {
 		return value.length() + ":" + value;

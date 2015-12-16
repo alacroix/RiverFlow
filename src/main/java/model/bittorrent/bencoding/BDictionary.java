@@ -21,28 +21,6 @@ public class BDictionary extends LinkedHashMap<String, BType> implements BType {
 	public final static char DELIMITER_START = 'd';
 	public final static char DELIMITER_END = 'e';
 
-	/*
-	@Override
-	public String getBencodedValue() {
-		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-		outputStream.write(DELIMITER_START);
-
-		// for each item, concat bencoded value
-		for (Map.Entry<String, BType> entry : dictionary.entrySet()) {
-			try {
-				encodedValue += new BString(entry.getKey()).getBencodedValue();
-				outputStream.write(entry.getValue().getBencodedValue());
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-
-		outputStream.write(DELIMITER_END);
-
-		return outputStream.toByteArray();
-	}
-	*/
-
 	@Override
 	public String getBencodedValue() {
 		String encodedValue = "" + DELIMITER_START;
