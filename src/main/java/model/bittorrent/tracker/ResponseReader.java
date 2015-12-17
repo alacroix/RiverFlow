@@ -41,7 +41,7 @@ public class ResponseReader {
 			ar = new AnnounceResponse(failure);
 		} else {
 			int complete = ((BInteger) rd.get(COMPLETE)).getValue();
-			int incomplete = ((BInteger) rd.get(COMPLETE)).getValue();
+			int incomplete = ((BInteger) rd.get(INCOMPLETE)).getValue();
 			int interval = ((BInteger) rd.get(INTERVAL)).getValue();
 
 			// peers in compact mode TODO: non-compact mode
@@ -63,11 +63,10 @@ public class ResponseReader {
 		}
 
 		for (int i = 0; i < value.length; i += 6) {
-			InetAddress ip = null;
 			try {
 				byte[] ipBytes = ArrayUtils.subarray(value, i, i + 4);
 				byte[] portBytes = ArrayUtils.subarray(value, i + 4, i + 6);
-				ip = InetAddress.getByAddress(ipBytes);
+				InetAddress ip = InetAddress.getByAddress(ipBytes);
 
 				ByteBuffer buffer = ByteBuffer.wrap(new byte[]{0, 0, portBytes[0], portBytes[1]});
 				int port = buffer.getInt();
