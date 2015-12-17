@@ -56,4 +56,16 @@ public abstract class AbstractInfoDictionary {
 	public abstract Mode getMode();
 
 	public abstract int getTotalLength();
+
+	public int getPiecesNumber() {
+		return (int) Math.ceil(getTotalLength() / pieceLength);
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public boolean isValidPiece(byte[] sha1, int index) {
+		return false;
+	}
 }
