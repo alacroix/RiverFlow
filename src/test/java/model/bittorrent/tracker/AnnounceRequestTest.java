@@ -19,7 +19,7 @@ import java.nio.file.Paths;
  * @version 0.1.0
  * @see MetainfoFile
  */
-public class TrackerRequestTest {
+public class AnnounceRequestTest {
 
 	private final static String RESOURCES_PATH = "src/test/resources/torrent_files/";
 
@@ -37,8 +37,8 @@ public class TrackerRequestTest {
 
 		Assert.assertEquals(20, peerId.length);
 
-		TrackerRequest request = new TrackerRequest(announce, infoHash, peerId, 6888,
-				0, 0, f.getTotalLength(), 1, 0, TrackerRequest.Event.STARTED);
+		AnnounceRequest request = new AnnounceRequest(announce, infoHash, peerId, 6888,
+				0, 0, f.getTotalLength(), 1, 0, AnnounceRequest.Event.STARTED);
 
 		String req = request.getRequest();
 

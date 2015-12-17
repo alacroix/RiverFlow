@@ -20,7 +20,7 @@ import java.nio.charset.StandardCharsets;
  * @author Adrien Lacroix
  * @version 0.1.0
  */
-public class TrackerRequest {
+public class AnnounceRequest {
 	/**
 	 * Base URL of the request.
 	 */
@@ -156,15 +156,15 @@ public class TrackerRequest {
 	private byte[] trackerID;
 	public final static String TRACKERID = "trackerid";
 
-	public TrackerRequest(String announceURL, byte[] infoHash, byte[] peerID, int port,
-	                      int uploaded, int downloaded, int left, int compact, int noPeerId, Event event) {
+	public AnnounceRequest(String announceURL, byte[] infoHash, byte[] peerID, int port,
+	                       int uploaded, int downloaded, int left, int compact, int noPeerId, Event event) {
 		this(announceURL, infoHash, peerID, port, uploaded, downloaded, left, compact, noPeerId, event,
 				null, 0, null, null);
 	}
 
-	public TrackerRequest(String announceURL, byte[] infoHash, byte[] peerID, int port, int uploaded,
-	                      int downloaded, int left, int compact, int noPeerId, Event event, String ip,
-	                      int numWant, String key, byte[] trackerID) {
+	public AnnounceRequest(String announceURL, byte[] infoHash, byte[] peerID, int port, int uploaded,
+	                       int downloaded, int left, int compact, int noPeerId, Event event, String ip,
+	                       int numWant, String key, byte[] trackerID) {
 		this.announceURL = announceURL;
 		this.infoHash = infoHash;
 		this.peerID = peerID;
