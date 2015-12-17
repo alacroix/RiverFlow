@@ -2,6 +2,8 @@ package model.bittorrent.bencoding;
 
 import org.apache.commons.lang3.ArrayUtils;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -12,13 +14,23 @@ import java.util.concurrent.atomic.AtomicInteger;
  * Note that there is no constant beginning delimiter, and no ending delimiter.
  *
  * @author Adrien Lacroix
- * @version 0.1.0
+ * @version 0.2.0
  */
 public class BString implements BType {
 	private String value;
 
+	/**
+	 * if String is an Base64 encoded string
+	 */
+	private boolean hasBeenEncoded;
+
 	public BString(String value) {
+		this(value, false);
+	}
+
+	public BString(String value, boolean hasBeenEncoded) {
 		this.value = (value != null ? value : "");
+		this.hasBeenEncoded = hasBeenEncoded;
 	}
 
 	public String getValue() {
@@ -28,6 +40,25 @@ public class BString implements BType {
 	@Override
 	public String getBencodedValue() {
 		return value.length() + ":" + value;
+	}
+
+	@Override
+	public byte[] getBencodedBytes() {
+		if (hasBeenEncoded) {
+			byte[] decoded = Base64.getDecoder().decode(value);
+
+			ByteArrayOutputStream output = new ByteArrayOutputStream();
+			try {
+				output.write(String.valueOf(decoded.length).getBytes());
+				output.write(':');
+				output.write(decoded);
+			} catch (IOException e) {
+				System.err.println("Error during bencoding bytes");
+			}
+			return output.toByteArray();
+		} else {
+			return getBencodedValue().getBytes(StandardCharsets.UTF_8);
+		}
 	}
 
 	public static BString read(byte[] content, AtomicInteger index) {
@@ -56,11 +87,12 @@ public class BString implements BType {
 		BString n = new BString(value);
 
 		// if loss of characters (ex: sha1)
-		if (n.getValue().length() != val.length) {
+		boolean hasToBeEncoded = (n.getValue().length() != val.length);
+		if (hasToBeEncoded) {
 			value = Base64.getEncoder().encodeToString(val);
 		}
 
-		return new BString(value);
+		return new BString(value, hasToBeEncoded);
 	}
 
 	@Override

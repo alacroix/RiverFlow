@@ -71,7 +71,7 @@ public class Peer {
 		if (obj == this) {
 			return true;
 		}
-		if (obj.getClass() != this.getClass()) {
+		if (obj == null || obj.getClass() != this.getClass()) {
 			return false;
 		}
 		Peer o = (Peer) obj;

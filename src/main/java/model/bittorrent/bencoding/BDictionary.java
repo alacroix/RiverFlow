@@ -1,5 +1,7 @@
 package model.bittorrent.bencoding;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -15,7 +17,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * The strings should be compared using a binary comparison, not a culture-specific "natural" comparison.
  *
  * @author Adrien Lacroix
- * @version 0.1.0
+ * @version 0.2.0
  */
 public class BDictionary extends TreeMap<String, BType> implements BType {
 	public final static char DELIMITER_START = 'd';
@@ -32,6 +34,27 @@ public class BDictionary extends TreeMap<String, BType> implements BType {
 		}
 
 		return encodedValue + DELIMITER_END;
+	}
+
+	@Override
+	public byte[] getBencodedBytes() {
+		ByteArrayOutputStream output = new ByteArrayOutputStream();
+
+		output.write(DELIMITER_START);
+
+		// for each item, concat bencoded value
+		for (Map.Entry<String, BType> entry : this.entrySet()) {
+			try {
+				output.write(new BString(entry.getKey()).getBencodedBytes());
+				output.write(entry.getValue().getBencodedBytes());
+			} catch (IOException e) {
+				System.err.println("Error during bencoding bytes");
+			}
+		}
+
+		output.write(DELIMITER_END);
+
+		return output.toByteArray();
 	}
 
 	public static BDictionary read(byte[] content, AtomicInteger index) {

@@ -14,7 +14,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * However, i0e is valid.
  *
  * @author Adrien Lacroix
- * @version 0.1.0
+ * @version 0.2.0
  */
 public class BInteger implements BType {
 	private Integer value;
@@ -30,6 +30,11 @@ public class BInteger implements BType {
 	@Override
 	public String getBencodedValue() {
 		return "i" + value + "e";
+	}
+
+	@Override
+	public byte[] getBencodedBytes() {
+		return getBencodedValue().getBytes(StandardCharsets.UTF_8);
 	}
 
 	public static BInteger read(byte[] content, AtomicInteger index) {

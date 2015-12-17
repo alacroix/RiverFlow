@@ -11,6 +11,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.MessageDigest;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -21,6 +22,8 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @version 0.1.0
  */
 public class TorrentFileReader {
+
+	public static byte[] good;
 
 	public static MetainfoFile readTorrentFile(Path path) throws IOException {
 		// read file
@@ -37,7 +40,16 @@ public class TorrentFileReader {
 		// optional elements
 		//BString comment = (BString) dictionary.get(COMMENT_ELEMENT);
 
-		return new MetainfoFile(info, getInfoHash(path), announce.getValue());
+		byte[] bad = infoD.getBencodedBytes();
+
+		System.err.println("hash equals?" + Arrays.equals(getInfoHash(path), DigestUtils.sha1(infoD.getBencodedBytes())));
+		getInfoHash(path);
+		System.err.println(good.length);
+		//System.err.println(Arrays.toString(good));
+		System.err.println(bad.length);
+		//System.err.println(Arrays.toString(bad));
+
+		return new MetainfoFile(info, DigestUtils.sha1(infoD.getBencodedBytes()), announce.getValue());
 	}
 
 	private static AbstractInfoDictionary extractInfoDictionary(BDictionary info) {
@@ -104,6 +116,7 @@ public class TorrentFileReader {
 			ByteArrayOutputStream output = new ByteArrayOutputStream();
 			for (int data; (data = input.read()) > -1; output.write(data)) ;
 			sha1.update(output.toByteArray(), 0, output.size() - 1);
+			good = output.toByteArray();
 		} finally {
 			if (input != null) try {
 				input.close();

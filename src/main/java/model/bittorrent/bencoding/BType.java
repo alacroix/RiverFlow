@@ -6,8 +6,10 @@ package model.bittorrent.bencoding;
  * It supports the following types: byte strings, integers, lists, and dictionaries.
  *
  * @author Adrien Lacroix
- * @version 0.1.0
+ * @version 0.2.0
  */
 public interface BType {
 	String getBencodedValue();
+
+	byte[] getBencodedBytes();
 }

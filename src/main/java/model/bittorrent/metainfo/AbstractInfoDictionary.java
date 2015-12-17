@@ -1,5 +1,7 @@
 package model.bittorrent.metainfo;
 
+import java.util.Base64;
+
 /**
  * A dictionary that describes the file(s) of the torrent.
  * <p>
@@ -30,7 +32,7 @@ public abstract class AbstractInfoDictionary {
 	 * String whose length is a multiple of 20. It is to be subdivided into strings
 	 * of length 20, each of which is the SHA1 hash of the piece at the corresponding index.
 	 */
-	private String pieces;
+	private byte[] pieces;
 
 	/**
 	 * (optional)
@@ -49,7 +51,10 @@ public abstract class AbstractInfoDictionary {
 	public AbstractInfoDictionary(String name, Integer pieceLength, String pieces, Integer privateTracker) {
 		this.name = name;
 		this.pieceLength = pieceLength;
-		this.pieces = pieces;
+		this.pieces = Base64.getDecoder().decode(pieces);
+		if (this.pieces.length % 20 != 0) {
+			throw new IllegalArgumentException("Invalid pieces hash");
+		}
 		this.privateTracker = privateTracker;
 	}
 
