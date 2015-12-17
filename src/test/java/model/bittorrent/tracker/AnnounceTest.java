@@ -27,7 +27,7 @@ public class AnnounceTest {
 	private String createRequest() throws IOException {
 		Path file = Paths.get(RESOURCES_PATH, "ubuntu-15.10-server-amd64.iso.torrent");
 
-		MetainfoFile f = Reader.readTorrentFile(file);
+		MetainfoFile f = TorrentFileReader.readTorrentFile(file);
 
 		String announce = f.getAnnounce();
 		String peerIdString = "-RF0010-012345678910";
