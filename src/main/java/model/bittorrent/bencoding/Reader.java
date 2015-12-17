@@ -3,10 +3,10 @@ package model.bittorrent.bencoding;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * Used to read a .torrent file and extract its data
+ * Read a bencoded type
  *
  * @author Adrien Lacroix
- * @version 0.1.0
+ * @version 0.2.0
  */
 public class Reader {
 
