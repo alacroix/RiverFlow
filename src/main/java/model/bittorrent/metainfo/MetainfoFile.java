@@ -21,6 +21,11 @@ public class MetainfoFile {
 	private AbstractInfoDictionary info;
 
 	/**
+	 * 20-byte SHA1 hash of the value of the info key from the Metainfo file.
+	 */
+	private byte[] infoSHA1;
+
+	/**
 	 * The announce URL of the tracker
 	 */
 	private String announce;
@@ -62,18 +67,31 @@ public class MetainfoFile {
 	 */
 	private String encoding;
 
-	public MetainfoFile(AbstractInfoDictionary info, String announce) {
-		this(info, announce, null, null, null, null, null);
+	public MetainfoFile(AbstractInfoDictionary info, byte[] infoSHA1, String announce) {
+		this(info, infoSHA1, announce, null, null, null, null, null);
 	}
 
-	public MetainfoFile(AbstractInfoDictionary info, String announce, String announceList,
+	public MetainfoFile(AbstractInfoDictionary info, byte[] infoSHA1, String announce, String announceList,
 	                    Integer creationDate, String comment, String createdBy, String encoding) {
 		this.info = info;
+		this.infoSHA1 = infoSHA1;
 		this.announce = announce;
 		this.announceList = announceList;
 		this.creationDate = creationDate;
 		this.comment = comment;
 		this.createdBy = createdBy;
 		this.encoding = encoding;
+	}
+
+	public String getAnnounce() {
+		return announce;
+	}
+
+	public byte[] getInfoHash() {
+		return infoSHA1;
+	}
+
+	public int getTotalLength() {
+		return info.getTotalLength();
 	}
 }

@@ -55,7 +55,7 @@ public class BString implements BType {
 
 		BString n = new BString(value);
 
-		// if sha1
+		// if loss of characters (ex: sha1)
 		if (n.getValue().length() != val.length) {
 			value = Base64.getEncoder().encodeToString(val);
 		}

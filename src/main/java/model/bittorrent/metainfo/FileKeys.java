@@ -36,4 +36,16 @@ public class FileKeys {
 		this.path = path;
 		this.md5Sum = md5Sum;
 	}
+
+	public Integer getLength() {
+		return length;
+	}
+
+	public List<String> getPath() {
+		return path;
+	}
+
+	public String getMd5Sum() {
+		return md5Sum;
+	}
 }

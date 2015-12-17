@@ -54,4 +54,6 @@ public abstract class AbstractInfoDictionary {
 	}
 
 	public abstract Mode getMode();
+
+	public abstract int getTotalLength();
 }

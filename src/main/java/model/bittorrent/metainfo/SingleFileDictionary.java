@@ -40,4 +40,8 @@ public class SingleFileDictionary extends AbstractInfoDictionary {
 	public Mode getMode() {
 		return Mode.SINGLE_FILE;
 	}
+
+	public int getTotalLength() {
+		return length;
+	}
 }

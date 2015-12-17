@@ -26,4 +26,13 @@ public class MultiFileDictionary extends AbstractInfoDictionary {
 	public Mode getMode() {
 		return Mode.MULTI_FILE;
 	}
+
+	@Override
+	public int getTotalLength() {
+		int totalLength = 0;
+		for (FileKeys k : files) {
+			totalLength += k.getLength();
+		}
+		return totalLength;
+	}
 }

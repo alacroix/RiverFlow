@@ -17,7 +17,7 @@ public class MetainfoFileTest {
 
 	@Test
 	public void testBitTorrentFile() throws Exception {
-		Path file = Paths.get(RESOURCES_PATH, "The Unforseeable Fate Of Mr. Jones.torrent");
+		Path file = Paths.get(RESOURCES_PATH, "ubuntu-15.10-server-amd64.iso.torrent");
 
 		Reader.readTorrentFile(file);
 	}

@@ -1,7 +1,7 @@
 package model.bittorrent.bencoding;
 
-import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -17,7 +17,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author Adrien Lacroix
  * @version 0.1.0
  */
-public class BDictionary extends LinkedHashMap<String, BType> implements BType {
+public class BDictionary extends TreeMap<String, BType> implements BType {
 	public final static char DELIMITER_START = 'd';
 	public final static char DELIMITER_END = 'e';
 

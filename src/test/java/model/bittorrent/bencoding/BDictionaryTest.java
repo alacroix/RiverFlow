@@ -13,9 +13,9 @@ public class BDictionaryTest {
 	@Test
 	public void testString() throws Exception {
 		BDictionary d = new BDictionary();
-		d.put("foo", new BString("bar"));
 		d.put("cow", new BString("moo"));
-		Assert.assertEquals("d3:foo3:bar3:cow3:mooe", d.getBencodedValue());
+		d.put("foo", new BString("bar"));
+		Assert.assertEquals("d3:cow3:moo3:foo3:bare", d.getBencodedValue());
 	}
 
 	@Test
