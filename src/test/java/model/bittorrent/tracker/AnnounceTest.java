@@ -1,13 +1,14 @@
 package model.bittorrent.tracker;
 
 import model.bittorrent.bencoding.Reader;
+import model.bittorrent.communication.Peer;
 import model.bittorrent.metainfo.MetainfoFile;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.io.BufferedReader;
+import java.io.BufferedInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
@@ -19,12 +20,11 @@ import java.nio.file.Paths;
  * @version 0.1.0
  * @see MetainfoFile
  */
-public class AnnounceRequestTest {
+public class AnnounceTest {
 
 	private final static String RESOURCES_PATH = "src/test/resources/torrent_files/";
 
-	@Test
-	public void testSimpleRequest() throws IOException {
+	private String createRequest() throws IOException {
 		Path file = Paths.get(RESOURCES_PATH, "ubuntu-15.10-server-amd64.iso.torrent");
 
 		MetainfoFile f = Reader.readTorrentFile(file);
@@ -35,40 +35,50 @@ public class AnnounceRequestTest {
 		Assert.assertNotNull(f.getInfoHash());
 		byte[] peerId = peerIdString.getBytes(StandardCharsets.UTF_8);
 
-		Assert.assertEquals(20, peerId.length);
+		return new AnnounceRequest(announce, infoHash, peerId, 6888,
+				0, 0, f.getTotalLength(), 1, 0, AnnounceRequest.Event.STARTED).getRequest();
+	}
 
-		AnnounceRequest request = new AnnounceRequest(announce, infoHash, peerId, 6888,
-				0, 0, f.getTotalLength(), 1, 0, AnnounceRequest.Event.STARTED);
+	@Test
+	public void testSimpleRequest() throws IOException {
+		// get request
+		String request = createRequest();
 
-		String req = request.getRequest();
-
-		URL obj = new URL(req);
+		// connect
+		URL obj = new URL(request);
 		HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-
-		// optional default is GET
 		con.setRequestMethod("GET");
 
+		// get response code
 		int responseCode = con.getResponseCode();
-		System.out.println("\nSending 'GET' request to URL : " + req);
+		System.out.println("\nSending 'GET' request to URL : " + request);
 		System.out.println("Response Code : " + responseCode);
 
-		BufferedReader in;
+		// get response
+		BufferedInputStream in;
 		if (responseCode != HttpURLConnection.HTTP_OK) {
-			in = new BufferedReader(
-					new InputStreamReader(con.getErrorStream()));
+			in = new BufferedInputStream(con.getErrorStream());
 		} else {
-			in = new BufferedReader(
-					new InputStreamReader(con.getInputStream()));
+			in = new BufferedInputStream(con.getInputStream());
 		}
-		String inputLine;
-		StringBuilder response = new StringBuilder();
 
-		while ((inputLine = in.readLine()) != null) {
-			response.append(inputLine);
+		ByteArrayOutputStream output = new ByteArrayOutputStream();
+
+		int current = 0;
+		while ((current = in.read()) != -1) {
+			output.write(current);
 		}
 		in.close();
 
 		//print result
-		System.out.println(response.toString());
+		if (responseCode != HttpURLConnection.HTTP_OK) {
+			System.out.println(output.toString());
+		} else {
+			AnnounceResponse response = ResponseReader.readAnnounceResponse(output.toByteArray());
+			for (Peer p : response.getPeers()) {
+				System.out.println(p);
+			}
+		}
+
 	}
 }

@@ -60,4 +60,26 @@ public class Peer {
 	public int getPort() {
 		return port;
 	}
+
+	@Override
+	public String toString() {
+		return peerID + '<' + ip + ':' + port + '>';
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == this) {
+			return true;
+		}
+		if (obj.getClass() != this.getClass()) {
+			return false;
+		}
+		Peer o = (Peer) obj;
+		return o.peerID.equals(this.peerID) && o.ip.equals(this.ip) && o.port == this.port;
+	}
+
+	@Override
+	public int hashCode() {
+		return peerID.hashCode() + ip.hashCode() + port;
+	}
 }
