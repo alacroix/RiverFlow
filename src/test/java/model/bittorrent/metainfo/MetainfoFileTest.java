@@ -1,6 +1,5 @@
 package model.bittorrent.metainfo;
 
-import model.bittorrent.bencoding.Reader;
 import org.junit.Test;
 
 import java.nio.file.Path;
@@ -19,6 +18,6 @@ public class MetainfoFileTest {
 	public void testBitTorrentFile() throws Exception {
 		Path file = Paths.get(RESOURCES_PATH, "ubuntu-15.10-server-amd64.iso.torrent");
 
-		Reader.readTorrentFile(file);
+		TorrentFileReader.readTorrentFile(file);
 	}
 }

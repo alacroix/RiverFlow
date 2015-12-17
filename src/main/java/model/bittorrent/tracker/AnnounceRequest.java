@@ -187,36 +187,26 @@ public class AnnounceRequest {
 
 		// announce url
 		builder.append(announceURL);
-
 		// add arguments
 		builder.append('?');
-
 		// info hash
 		builder.append(INFO_HASH).append('=').append(new String(codec.encode(infoHash), StandardCharsets.UTF_8));
-
 		// peer id
 		builder.append('&').append(PEER_ID).append('=').append(new String(codec.encode(peerID), StandardCharsets.UTF_8));
-
 		// port
 		builder.append('&').append(PORT).append('=').append(port);
-
 		// uploaded
 		builder.append('&').append(UPLOADED).append('=').append(uploaded);
-
 		// downloaded
 		builder.append('&').append(DOWNLOADED).append('=').append(downloaded);
-
 		// left
 		builder.append('&').append(LEFT).append('=').append(left);
-
 		// compact
 		builder.append('&').append(COMPACT).append('=').append(compact);
-
 		// no peer id
 		if (compact == 0) {
 			builder.append('&').append(NO_PEER_ID).append('=').append(noPeerId);
 		}
-
 		// event
 		if (event != null) {
 			builder.append('&').append(EVENT).append('=').append(event.toString().toLowerCase());
