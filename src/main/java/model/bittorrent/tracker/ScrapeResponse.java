@@ -9,6 +9,7 @@ import java.util.Map;
 public class ScrapeResponse {
 	/**
 	 * Map of files contained in the response
+	 * The key is the hex representation of the info hash
 	 */
 	private Map<String, ScrapeKeys> files;
 
