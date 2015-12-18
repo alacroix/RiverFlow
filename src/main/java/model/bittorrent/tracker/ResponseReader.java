@@ -1,18 +1,14 @@
 package model.bittorrent.tracker;
 
-import model.bittorrent.bencoding.BDictionary;
-import model.bittorrent.bencoding.BInteger;
-import model.bittorrent.bencoding.BString;
-import model.bittorrent.bencoding.Reader;
+import model.bittorrent.bencoding.*;
 import model.bittorrent.communication.Peer;
+import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.lang3.ArrayUtils;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
-import java.util.Base64;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -28,6 +24,10 @@ public class ResponseReader {
 	private final static String INCOMPLETE = "incomplete";
 	private final static String INTERVAL = "interval";
 	private final static String PEERS = "peers";
+
+	private final static String FILES = "files";
+	private final static String DOWNLOADED = "downloaded";
+	private final static String NAME = "name";
 
 	public static AnnounceResponse readAnnounceResponse(byte[] response) {
 		AtomicInteger index = new AtomicInteger(0);
@@ -78,5 +78,30 @@ public class ResponseReader {
 		}
 
 		return peers;
+	}
+
+	public static ScrapeResponse readScrapeResponse(byte[] response) {
+		AtomicInteger index = new AtomicInteger(0);
+		BDictionary rd = (BDictionary) Reader.read(response, index);
+
+		BDictionary filesD = (BDictionary) rd.get(FILES);
+		Map<String, ScrapeKeys> files = new HashMap<>();
+		// for each file
+		for (Map.Entry<String, BType> entry : filesD.entrySet()) {
+			byte[] infoHash = Base64.getDecoder().decode(entry.getKey());
+
+			BDictionary values = (BDictionary) entry.getValue();
+			int complete = ((BInteger) values.get(COMPLETE)).getValue();
+			int downloaded = ((BInteger) values.get(DOWNLOADED)).getValue();
+			int incomplete = ((BInteger) values.get(INCOMPLETE)).getValue();
+			String name = null;
+			if (values.containsKey(NAME)) {
+				name = ((BString) values.get(NAME)).getValue();
+			}
+
+			files.put(Hex.encodeHexString(infoHash), new ScrapeKeys(complete, downloaded, incomplete, name));
+		}
+
+		return new ScrapeResponse(files);
 	}
 }

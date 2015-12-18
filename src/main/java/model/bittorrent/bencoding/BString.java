@@ -88,6 +88,14 @@ public class BString implements BType {
 
 		// if loss of characters (ex: sha1)
 		boolean hasToBeEncoded = (n.getValue().length() != val.length);
+
+		// if special chars
+		for (byte b : val) {
+			if (b < 0) {
+				hasToBeEncoded = true;
+			}
+		}
+
 		if (hasToBeEncoded) {
 			value = Base64.getEncoder().encodeToString(val);
 		}

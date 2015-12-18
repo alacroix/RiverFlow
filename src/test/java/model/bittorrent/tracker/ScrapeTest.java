@@ -1,8 +1,8 @@
 package model.bittorrent.tracker;
 
-import model.bittorrent.communication.Peer;
 import model.bittorrent.metainfo.MetainfoFile;
 import model.bittorrent.metainfo.TorrentFileReader;
+import org.apache.commons.codec.binary.Hex;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -11,17 +11,20 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * @author Adrien Lacroix
  * @version 0.1.0
  */
-public class AnnounceTest {
+public class ScrapeTest {
 
 	private final static String RESOURCES_PATH = "src/test/resources/torrent_files/";
+
+	private String infoHashHex;
 
 	private String createRequest() throws IOException {
 		Path file = Paths.get(RESOURCES_PATH, "ubuntu-15.10-server-amd64.iso.torrent");
@@ -29,19 +32,20 @@ public class AnnounceTest {
 		MetainfoFile f = TorrentFileReader.readTorrentFile(file);
 
 		String announce = f.getAnnounce();
-		String peerIdString = "-RF0010-012345678910";
 		byte[] infoHash = f.getInfoHash();
-		Assert.assertNotNull(f.getInfoHash());
-		byte[] peerId = peerIdString.getBytes(StandardCharsets.UTF_8);
+		infoHashHex = Hex.encodeHexString(infoHash);
 
-		return new AnnounceRequest(announce, infoHash, peerId, 6888,
-				0, 0, f.getTotalLength(), 1, 0, null).getRequest();
+		Set<byte[]> set = new HashSet<>();
+		set.add(infoHash);
+
+		return new ScrapeRequest(announce, set).getRequest();
 	}
 
 	@Test
-	public void testAnnounce() throws IOException {
+	public void testScrape() throws IOException {
 		// get request
 		String request = createRequest();
+		System.out.println(request);
 
 		// connect
 		URL obj = new URL(request);
@@ -73,10 +77,8 @@ public class AnnounceTest {
 		if (responseCode != HttpURLConnection.HTTP_OK) {
 			System.out.println(output.toString());
 		} else {
-			AnnounceResponse response = ResponseReader.readAnnounceResponse(output.toByteArray());
-			for (Peer p : response.getPeers()) {
-				System.out.println(p);
-			}
+			ScrapeResponse response = ResponseReader.readScrapeResponse(output.toByteArray());
+			Assert.assertNotNull(response.getFile(infoHashHex));
 		}
 
 	}
