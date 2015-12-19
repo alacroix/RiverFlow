@@ -15,14 +15,14 @@ public enum MessageType {
 	PIECE(9, 7),
 	CANCEL(13, 8),
 	PORT(3, 9),
-	HANDSHAKE,
-	KEEP_ALIVE;
+	HANDSHAKE(49 + Message.HANDSHAKE_PSTR.length()),
+	KEEP_ALIVE(0);
 
 	private int lengthPrefix;
 	private int id;
 
-	MessageType() {
-		this(0, -1);
+	MessageType(int lengthPrefix) {
+		this(lengthPrefix, -1);
 	}
 
 	MessageType(int lengthPrefix, int id) {

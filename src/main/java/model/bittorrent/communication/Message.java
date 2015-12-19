@@ -14,6 +14,8 @@ import java.nio.charset.StandardCharsets;
  */
 public class Message {
 
+	public final static String HANDSHAKE_PSTR = "BitTorrent Protocol";
+
 	/**
 	 * four byte big-endian value
 	 */
@@ -279,14 +281,14 @@ public class Message {
 	public static Message decode(byte[] response) throws IOException {
 		int index = 0;
 		// handshake
-		if (response.length == 49 + 19) {
+		if (response.length == MessageType.HANDSHAKE.getLengthPrefix()) {
 			int pstrlen = Byte.toUnsignedInt(response[0]);
 			// if pstrlen good
-			if (pstrlen == 19) {
+			if (pstrlen == HANDSHAKE_PSTR.length()) {
 				index++;
 				String pstr = new String(response, index, pstrlen);
 				// if pstr good
-				if (pstr.equals("BitTorrent Protocol")) {
+				if (pstr.equals(HANDSHAKE_PSTR)) {
 					index += pstrlen;
 					// skip reserved
 					index += 8;
@@ -374,6 +376,20 @@ public class Message {
 	 */
 	public MessageType getType() {
 		return type;
+	}
+
+	public byte[] getInfoHash() {
+		if (getType() != MessageType.HANDSHAKE) {
+			throw new IllegalStateException("Message must be Handshake type");
+		}
+		return infoHash;
+	}
+
+	public String getPeerID() {
+		if (getType() != MessageType.HANDSHAKE) {
+			throw new IllegalStateException("Message must be Handshake type");
+		}
+		return peerID;
 	}
 
 	public int getLengthPrefix() {
@@ -477,7 +493,7 @@ public class Message {
 			String reserved = "00000000";
 
 			builder.append("<pstrlen=").append(pstr.length()).append('>');
-			builder.append("<pstr").append(pstr).append('>');
+			builder.append("<pstr=").append(pstr).append('>');
 			builder.append("<reserved=").append(reserved).append(">");
 			builder.append("<info_hash=").append(Hex.encodeHexString(infoHash)).append(">");
 			builder.append("<peer_id=").append(peerID).append(">");

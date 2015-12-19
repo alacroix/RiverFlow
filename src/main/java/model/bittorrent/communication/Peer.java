@@ -1,5 +1,7 @@
 package model.bittorrent.communication;
 
+import java.net.Socket;
+
 /**
  * A peer is any BitTorrent client participating in a download.
  * <p>
@@ -8,9 +10,14 @@ package model.bittorrent.communication;
  * choose to think of themselves as the client which connects to numerous peers.
  *
  * @author Adrien Lacroix
- * @version 0.1.0
+ * @version 0.2.0
  */
 public class Peer {
+	/**
+	 * Default peer ID for peers decoded from compact mode
+	 */
+	public final static String PEER_ID_DEFAULT = "PeerDefault";
+
 	/**
 	 * peer's self-selected ID, as described above for the tracker request
 	 */
@@ -33,7 +40,7 @@ public class Peer {
 	 * @param port peer's port number
 	 */
 	public Peer(String ip, int port) {
-		this("Peer", ip, port);
+		this(PEER_ID_DEFAULT, ip, port);
 	}
 
 	/**
@@ -47,6 +54,14 @@ public class Peer {
 		this.peerID = peerID;
 		this.ip = ip;
 		this.port = port;
+	}
+
+	public static Peer fromSocket(Socket socket) {
+		return new Peer(socket.getInetAddress().getHostAddress(), socket.getPort());
+	}
+
+	public void setPeerID(String peerID) {
+		this.peerID = peerID;
 	}
 
 	public String getPeerID() {
