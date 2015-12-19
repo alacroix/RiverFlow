@@ -1,5 +1,7 @@
 package model.bittorrent.communication;
 
+import org.apache.commons.codec.binary.Hex;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -371,7 +373,7 @@ public class Message {
 			builder.append("<pstrlen=").append(pstr.length()).append('>');
 			builder.append("<pstr").append(pstr).append('>');
 			builder.append("<reserved=").append(reserved).append(">");
-			builder.append("<info_hash=").append(new String(infoHash)).append(">");
+			builder.append("<info_hash=").append(Hex.encodeHexString(infoHash)).append(">");
 			builder.append("<peer_id=").append(peerID).append(">");
 
 			return builder.toString();

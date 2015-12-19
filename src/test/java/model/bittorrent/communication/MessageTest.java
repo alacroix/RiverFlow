@@ -1,7 +1,10 @@
 package model.bittorrent.communication;
 
+import model.client.PeerID;
 import org.junit.Assert;
 import org.junit.Test;
+
+import java.nio.charset.StandardCharsets;
 
 /**
  * @author Adrien Lacroix
@@ -15,7 +18,8 @@ public class MessageTest {
 	@Test
 	public void testHandshake() throws Exception {
 		byte[] infoHash = new byte[20];
-		byte[] peerID = new byte[20];
+		byte[] peerID = PeerID.generatePeerID().getBytes(StandardCharsets.UTF_8);
+		Assert.assertEquals(20, peerID.length);
 		Message m = Message.handshake(infoHash, new String(peerID));
 		Assert.assertEquals(MessageType.HANDSHAKE, m.getType());
 		Assert.assertEquals(49 + 19, m.toBytes().length);

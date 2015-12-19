@@ -3,6 +3,7 @@ package model.bittorrent.tracker;
 import model.bittorrent.communication.Peer;
 import model.bittorrent.metainfo.MetainfoFile;
 import model.bittorrent.metainfo.TorrentFileReader;
+import model.client.PeerID;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -29,7 +30,7 @@ public class AnnounceTest {
 		MetainfoFile f = TorrentFileReader.readTorrentFile(file);
 
 		String announce = f.getAnnounce();
-		String peerIdString = "-RF0010-012345678910";
+		String peerIdString = PeerID.generatePeerID();
 		byte[] infoHash = f.getInfoHash();
 		Assert.assertNotNull(f.getInfoHash());
 		byte[] peerId = peerIdString.getBytes(StandardCharsets.UTF_8);
