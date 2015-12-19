@@ -16,7 +16,7 @@ public enum MessageType {
 	CANCEL(13, 8),
 	PORT(3, 9),
 	HANDSHAKE,
-	KEEP_ALIVE,;
+	KEEP_ALIVE;
 
 	private int lengthPrefix;
 	private int id;
