@@ -75,11 +75,11 @@ public class Peer {
 			return false;
 		}
 		Peer o = (Peer) obj;
-		return o.peerID.equals(this.peerID) && o.ip.equals(this.ip) && o.port == this.port;
+		return o.ip.equals(this.ip) && o.port == this.port;
 	}
 
 	@Override
 	public int hashCode() {
-		return peerID.hashCode() + ip.hashCode() + port;
+		return ip.hashCode() + port;
 	}
 }
