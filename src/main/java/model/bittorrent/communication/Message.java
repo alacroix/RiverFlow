@@ -6,11 +6,9 @@ import java.nio.ByteBuffer;
 
 /**
  * @author Adrien Lacroix
- * @version 0.1.0
+ * @version 0.2.0
  */
 public class Message {
-
-	private final static int LENGTH_PREFIX_SIZE = 4;
 
 	/**
 	 * four byte big-endian value
@@ -32,7 +30,7 @@ public class Message {
 
 	private byte[] block;
 
-	private int port;
+	private short port;
 
 	private Message(MessageType type, int lengthPrefix) {
 		this.type = type;
@@ -44,23 +42,18 @@ public class Message {
 		this.bitField = bitField;
 	}
 
-	private Message(MessageType type, int lengthPrefix, int otherInt) {
+	private Message(MessageType type, int lengthPrefix, short port) {
 		this(type, lengthPrefix);
-		switch (type) {
-			case HAVE:
-				this.index = otherInt;
-				break;
-			case PORT:
-				this.port = otherInt;
-				break;
-			default:
-				throw new IllegalArgumentException("Invalid constructor for type " + type);
-		}
+		this.port = port;
+	}
+
+	private Message(MessageType type, int lengthPrefix, int index) {
+		this(type, lengthPrefix);
+		this.index = index;
 	}
 
 	private Message(MessageType type, int lengthPrefix, int index, int begin) {
-		this(type, lengthPrefix);
-		this.index = index;
+		this(type, lengthPrefix, index);
 		this.begin = begin;
 	}
 
@@ -235,7 +228,7 @@ public class Message {
 	 * @param port peer's DHT node listening port
 	 * @return port message
 	 */
-	public static Message port(int port) {
+	public static Message port(short port) {
 		MessageType t = MessageType.PORT;
 		return new Message(t, t.getLengthPrefix(), port);
 	}
@@ -253,9 +246,15 @@ public class Message {
 		return lengthPrefix;
 	}
 
-	private byte[] getLengthBytes() {
-		ByteBuffer buffer = ByteBuffer.allocate(LENGTH_PREFIX_SIZE);
-		buffer.putInt(lengthPrefix);
+	private byte[] intToBytesArray(int value) {
+		ByteBuffer buffer = ByteBuffer.allocate(Integer.BYTES);
+		buffer.putInt(value);
+		return buffer.array();
+	}
+
+	private byte[] shortToBytesArray(short value) {
+		ByteBuffer buffer = ByteBuffer.allocate(Short.BYTES);
+		buffer.putShort(value);
 		return buffer.array();
 	}
 
@@ -263,7 +262,44 @@ public class Message {
 		ByteArrayOutputStream output = new ByteArrayOutputStream();
 
 		try {
-			output.write(getLengthBytes());
+			// length prefix
+			output.write(intToBytesArray(lengthPrefix));
+
+			// write id if not keep alive
+			if (type == MessageType.KEEP_ALIVE) {
+				return output.toByteArray();
+			} else {
+				output.write(type.getId());
+			}
+
+			switch (type) {
+				case CHOKE:
+				case UNCHOKE:
+				case INTERESTED:
+				case NOT_INTERESTED:
+					break;
+				case HAVE:
+					output.write(intToBytesArray(index));
+					break;
+				case BITFIELD:
+					output.write(bitField);
+					break;
+				case REQUEST:
+				case CANCEL:
+					output.write(intToBytesArray(index));
+					output.write(intToBytesArray(begin));
+					output.write(intToBytesArray(length));
+					break;
+				case PIECE:
+					output.write(intToBytesArray(index));
+					output.write(intToBytesArray(begin));
+					output.write(block);
+					break;
+				case PORT:
+					output.write(shortToBytesArray(port));
+					break;
+			}
+
 		} catch (IOException e) {
 			System.err.println("Failed creating message");
 		}
