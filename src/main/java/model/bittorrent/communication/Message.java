@@ -1,6 +1,7 @@
 package model.bittorrent.communication;
 
 import org.apache.commons.codec.binary.Hex;
+import org.apache.commons.lang3.ArrayUtils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -9,7 +10,7 @@ import java.nio.charset.StandardCharsets;
 
 /**
  * @author Adrien Lacroix
- * @version 0.2.0
+ * @version 0.3.0
  */
 public class Message {
 
@@ -37,12 +38,16 @@ public class Message {
 
 	private byte[] block;
 
-	private short port;
+	private int port;
 
 	private Message(MessageType type, byte[] infoHash, String peerID) {
 		this.type = type;
 		this.infoHash = infoHash;
 		this.peerID = peerID;
+	}
+
+	private Message(MessageType type) {
+		this(type, type.getLengthPrefix());
 	}
 
 	private Message(MessageType type, int lengthPrefix) {
@@ -55,18 +60,25 @@ public class Message {
 		this.bitField = bitField;
 	}
 
-	private Message(MessageType type, int lengthPrefix, short port) {
+	private Message(MessageType type, int lengthPrefix, int otherInt) {
 		this(type, lengthPrefix);
-		this.port = port;
-	}
-
-	private Message(MessageType type, int lengthPrefix, int index) {
-		this(type, lengthPrefix);
-		this.index = index;
+		if (type == MessageType.PORT) {
+			// if port valid (short value)
+			if (otherInt < Short.MAX_VALUE * 2 + 1) {
+				this.port = otherInt;
+			} else {
+				throw new IllegalArgumentException("Invalid port value");
+			}
+		} else if (type == MessageType.HAVE) {
+			this.index = otherInt;
+		} else {
+			throw new IllegalArgumentException("Wrong constructor called");
+		}
 	}
 
 	private Message(MessageType type, int lengthPrefix, int index, int begin) {
-		this(type, lengthPrefix, index);
+		this(type, lengthPrefix);
+		this.index = index;
 		this.begin = begin;
 	}
 
@@ -80,10 +92,6 @@ public class Message {
 	                int begin, byte[] block) {
 		this(type, lengthPrefix, index, begin);
 		this.block = block;
-	}
-
-	private static Message getSimpleMessage(MessageType type) {
-		return new Message(type, type.getLengthPrefix());
 	}
 
 	/**
@@ -113,7 +121,7 @@ public class Message {
 	 * @return keep-alive message
 	 */
 	public static Message keepAlive() {
-		return new Message(MessageType.KEEP_ALIVE, MessageType.KEEP_ALIVE.getLengthPrefix());
+		return new Message(MessageType.KEEP_ALIVE);
 	}
 
 	/**
@@ -122,7 +130,7 @@ public class Message {
 	 * @return choke message
 	 */
 	public static Message choke() {
-		return getSimpleMessage(MessageType.CHOKE);
+		return new Message(MessageType.CHOKE);
 	}
 
 	/**
@@ -131,7 +139,7 @@ public class Message {
 	 * @return unchoke message
 	 */
 	public static Message unchoke() {
-		return getSimpleMessage(MessageType.UNCHOKE);
+		return new Message(MessageType.UNCHOKE);
 	}
 
 	/**
@@ -140,7 +148,7 @@ public class Message {
 	 * @return interested message
 	 */
 	public static Message interested() {
-		return getSimpleMessage(MessageType.INTERESTED);
+		return new Message(MessageType.INTERESTED);
 	}
 
 	/**
@@ -149,7 +157,7 @@ public class Message {
 	 * @return not interested message
 	 */
 	public static Message notInterested() {
-		return getSimpleMessage(MessageType.NOT_INTERESTED);
+		return new Message(MessageType.NOT_INTERESTED);
 	}
 
 	/**
@@ -256,9 +264,107 @@ public class Message {
 	 * @param port peer's DHT node listening port
 	 * @return port message
 	 */
-	public static Message port(short port) {
+	public static Message port(int port) {
 		MessageType t = MessageType.PORT;
 		return new Message(t, t.getLengthPrefix(), port);
+	}
+
+	/**
+	 * Decode a byte array to a concrete BT message
+	 *
+	 * @param response bytes response from socket
+	 * @return actual message
+	 * @throws IOException
+	 */
+	public static Message decode(byte[] response) throws IOException {
+		int index = 0;
+		// handshake
+		if (response.length == 49 + 19) {
+			int pstrlen = Byte.toUnsignedInt(response[0]);
+			// if pstrlen good
+			if (pstrlen == 19) {
+				index++;
+				String pstr = new String(response, index, pstrlen);
+				// if pstr good
+				if (pstr.equals("BitTorrent Protocol")) {
+					index += pstrlen;
+					// skip reserved
+					index += 8;
+					// info hash
+					byte[] infoHash = ArrayUtils.subarray(response, index, index + 20);
+					index += 20;
+					// peer id
+					String peerID = new String(ArrayUtils.subarray(response, index, index + 20),
+							StandardCharsets.UTF_8);
+
+					return handshake(infoHash, peerID);
+				}
+			}
+		}
+
+		// if not a handshake, reset index
+		index = 0;
+
+		ByteBuffer buffer = ByteBuffer.wrap(response, 0, Integer.BYTES);
+		int lengthPrefix = buffer.getInt();
+
+		// keep-alive
+		if (lengthPrefix == 0 && response.length == Integer.BYTES) {
+			return keepAlive();
+		}
+
+		index += Integer.BYTES;
+
+		int id = (int) response[index];
+
+		index++;
+
+		MessageType type = MessageType.fromID(id);
+
+		switch (type) {
+			case CHOKE:
+				return choke();
+			case UNCHOKE:
+				return unchoke();
+			case INTERESTED:
+				return interested();
+			case NOT_INTERESTED:
+				return notInterested();
+			case HAVE:
+				buffer = ByteBuffer.wrap(ArrayUtils.subarray(response, index, index + Integer.BYTES));
+				return have(buffer.getInt());
+			case REQUEST:
+			case CANCEL:
+			case PIECE:
+				buffer = ByteBuffer.wrap(ArrayUtils.subarray(response, index, index + Integer.BYTES));
+				int indexVal = buffer.getInt();
+				index += Integer.BYTES;
+				buffer = ByteBuffer.wrap(ArrayUtils.subarray(response, index, index + Integer.BYTES));
+				int begin = buffer.getInt();
+				index += Integer.BYTES;
+				if (type == MessageType.PIECE) {
+					int length = lengthPrefix - MessageType.BITFIELD.getLengthPrefix();
+					return piece(indexVal, begin,
+							ArrayUtils.subarray(response, index, index + length));
+				} else {
+					buffer = ByteBuffer.wrap(ArrayUtils.subarray(response, index, index + Integer.BYTES));
+					int length = buffer.getInt();
+					if (type == MessageType.REQUEST) {
+						return request(indexVal, begin, length);
+					} else {
+						return cancel(indexVal, begin, length);
+					}
+				}
+			case BITFIELD:
+				int length = lengthPrefix - MessageType.BITFIELD.getLengthPrefix();
+				return bitfield(ArrayUtils.subarray(response, index, index + length));
+			case PORT:
+				byte[] portBytes = ArrayUtils.subarray(response, index, index + Short.BYTES);
+				buffer = ByteBuffer.wrap(new byte[]{0, 0, portBytes[0], portBytes[1]});
+				return port(buffer.getInt());
+			default:
+				throw new IOException("Invalid message");
+		}
 	}
 
 	/**
@@ -348,7 +454,7 @@ public class Message {
 					output.write(block);
 					break;
 				case PORT:
-					output.write(shortToBytesArray(port));
+					output.write(shortToBytesArray((short) port));
 					break;
 			}
 

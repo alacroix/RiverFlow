@@ -5,8 +5,6 @@ package model.bittorrent.communication;
  * @version 0.1.0
  */
 public enum MessageType {
-	HANDSHAKE,
-	KEEP_ALIVE,
 	CHOKE(1, 0),
 	UNCHOKE(1, 1),
 	INTERESTED(1, 2),
@@ -16,7 +14,9 @@ public enum MessageType {
 	REQUEST(13, 6),
 	PIECE(9, 7),
 	CANCEL(13, 8),
-	PORT(3, 9);
+	PORT(3, 9),
+	HANDSHAKE,
+	KEEP_ALIVE,;
 
 	private int lengthPrefix;
 	private int id;
@@ -36,5 +36,32 @@ public enum MessageType {
 
 	public int getId() {
 		return id;
+	}
+
+	public static MessageType fromID(int id) {
+		switch (id) {
+			case 0:
+				return CHOKE;
+			case 1:
+				return UNCHOKE;
+			case 2:
+				return INTERESTED;
+			case 3:
+				return NOT_INTERESTED;
+			case 4:
+				return HAVE;
+			case 5:
+				return BITFIELD;
+			case 6:
+				return REQUEST;
+			case 7:
+				return PIECE;
+			case 8:
+				return CANCEL;
+			case 9:
+				return PORT;
+			default:
+				throw new IllegalArgumentException("Invalid MessageType id");
+		}
 	}
 }

@@ -3,6 +3,8 @@ package model.client;
 import org.apache.commons.lang3.RandomStringUtils;
 
 /**
+ * Peer ID class generator for current client
+ *
  * @author Adrien Lacroix
  * @version 0.1.0
  */
