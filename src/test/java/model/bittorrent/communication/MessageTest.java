@@ -13,6 +13,15 @@ public class MessageTest {
 	private final static int PREFIX_LEN = Integer.BYTES;
 
 	@Test
+	public void testHandshake() throws Exception {
+		byte[] infoHash = new byte[20];
+		byte[] peerID = new byte[20];
+		Message m = Message.handshake(infoHash, new String(peerID));
+		Assert.assertEquals(MessageType.HANDSHAKE, m.getType());
+		Assert.assertEquals(49 + 19, m.toBytes().length);
+	}
+
+	@Test
 	public void testKeepAlive() throws Exception {
 		Message m = Message.keepAlive();
 		Assert.assertEquals(MessageType.KEEP_ALIVE, m.getType());

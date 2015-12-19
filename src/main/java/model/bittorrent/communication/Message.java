@@ -3,6 +3,7 @@ package model.bittorrent.communication;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 
 /**
  * @author Adrien Lacroix
@@ -20,6 +21,10 @@ public class Message {
 	 */
 	private MessageType type;
 
+	private byte[] infoHash;
+
+	private String peerID;
+
 	private int index;
 
 	private int begin;
@@ -31,6 +36,12 @@ public class Message {
 	private byte[] block;
 
 	private short port;
+
+	private Message(MessageType type, byte[] infoHash, String peerID) {
+		this.type = type;
+		this.infoHash = infoHash;
+		this.peerID = peerID;
+	}
 
 	private Message(MessageType type, int lengthPrefix) {
 		this.type = type;
@@ -71,6 +82,21 @@ public class Message {
 
 	private static Message getSimpleMessage(MessageType type) {
 		return new Message(type, type.getLengthPrefix());
+	}
+
+	/**
+	 * The handshake is a required message and must be the first message
+	 * transmitted by the client. It is (49+len(pstr)) bytes long.
+	 *
+	 * @param infoHash 20-byte SHA1 hash of the info key in the metainfo file.
+	 *                 This is the same info_hash that is transmitted in tracker requests.
+	 * @param peerID   20-byte string used as a unique ID for the client. This is usually
+	 *                 the same peer_id that is transmitted in tracker requests
+	 *                 (but not always e.g. an anonymity option in Azureus).
+	 * @return handshake message
+	 */
+	public static Message handshake(byte[] infoHash, String peerID) {
+		return new Message(MessageType.HANDSHAKE, infoHash, peerID);
 	}
 
 	/**
@@ -261,6 +287,30 @@ public class Message {
 	public byte[] toBytes() {
 		ByteArrayOutputStream output = new ByteArrayOutputStream();
 
+		// if handshake
+		if (type == MessageType.HANDSHAKE) {
+			byte[] pstr = "BitTorrent Protocol".getBytes(StandardCharsets.UTF_8);
+			byte[] reserved = new byte[8];
+
+			try {
+				// pstrlen
+				output.write(pstr.length);
+				// pstre
+				output.write(pstr);
+				// reserved
+				output.write(reserved);
+				// info hash
+				output.write(infoHash);
+				// peer id
+				output.write(peerID.getBytes(StandardCharsets.UTF_8));
+
+				return output.toByteArray();
+			} catch (IOException e) {
+				System.err.println("Failed creating handshake message");
+			}
+		}
+
+		// else, common builder
 		try {
 			// length prefix
 			output.write(intToBytesArray(lengthPrefix));
@@ -310,7 +360,25 @@ public class Message {
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		builder.append(type.toString()).append("<len=").append(lengthPrefix).append('>');
+
+		builder.append(type.toString());
+
+		// if handshake
+		if (type == MessageType.HANDSHAKE) {
+			String pstr = "BitTorrent Protocol";
+			String reserved = "00000000";
+
+			builder.append("<pstrlen=").append(pstr.length()).append('>');
+			builder.append("<pstr").append(pstr).append('>');
+			builder.append("<reserved=").append(reserved).append(">");
+			builder.append("<info_hash=").append(new String(infoHash)).append(">");
+			builder.append("<peer_id=").append(peerID).append(">");
+
+			return builder.toString();
+		} else {
+			// else, common builder
+			builder.append("<len=").append(lengthPrefix).append('>');
+		}
 
 		if (type == MessageType.KEEP_ALIVE) {
 			return builder.toString();

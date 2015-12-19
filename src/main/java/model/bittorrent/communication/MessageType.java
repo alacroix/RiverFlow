@@ -5,6 +5,7 @@ package model.bittorrent.communication;
  * @version 0.1.0
  */
 public enum MessageType {
+	HANDSHAKE,
 	KEEP_ALIVE,
 	CHOKE(1, 0),
 	UNCHOKE(1, 1),
