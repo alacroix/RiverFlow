@@ -1,4 +1,4 @@
-package model.bittorrent.metainfo;
+package model.bittorrent.torrent;
 
 /**
  * All data in a metainfo file is bencoded. The specification for bencoding is defined above.

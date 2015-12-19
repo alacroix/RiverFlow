@@ -1,7 +1,7 @@
 package model.bittorrent.tracker;
 
-import model.bittorrent.metainfo.MetainfoFile;
-import model.bittorrent.metainfo.TorrentFileReader;
+import model.bittorrent.torrent.MetainfoFile;
+import model.bittorrent.torrent.TorrentFileReader;
 import org.apache.commons.codec.binary.Hex;
 import org.junit.Assert;
 import org.junit.Test;
@@ -67,7 +67,7 @@ public class ScrapeTest {
 
 		ByteArrayOutputStream output = new ByteArrayOutputStream();
 
-		int current = 0;
+		int current;
 		while ((current = in.read()) != -1) {
 			output.write(current);
 		}

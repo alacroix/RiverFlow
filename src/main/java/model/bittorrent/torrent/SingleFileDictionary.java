@@ -1,4 +1,4 @@
-package model.bittorrent.metainfo;
+package model.bittorrent.torrent;
 
 /**
  * @author Adrien Lacroix

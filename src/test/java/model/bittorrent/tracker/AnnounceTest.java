@@ -1,8 +1,8 @@
 package model.bittorrent.tracker;
 
 import model.bittorrent.communication.Peer;
-import model.bittorrent.metainfo.MetainfoFile;
-import model.bittorrent.metainfo.TorrentFileReader;
+import model.bittorrent.torrent.MetainfoFile;
+import model.bittorrent.torrent.TorrentFileReader;
 import model.client.PeerID;
 import org.junit.Assert;
 import org.junit.Test;
@@ -64,7 +64,7 @@ public class AnnounceTest {
 
 		ByteArrayOutputStream output = new ByteArrayOutputStream();
 
-		int current = 0;
+		int current;
 		while ((current = in.read()) != -1) {
 			output.write(current);
 		}

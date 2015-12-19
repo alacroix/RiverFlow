@@ -1,4 +1,4 @@
-package model.bittorrent.metainfo;
+package model.bittorrent.torrent;
 
 import model.bittorrent.bencoding.*;
 import org.apache.commons.codec.digest.DigestUtils;
