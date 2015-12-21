@@ -11,14 +11,14 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * Utils class to read torrent file and extract a MetainfoFile
+ * Utils class to read torrent file and extract a Metainfo
  *
  * @author Adrien Lacroix
  * @version 0.1.0
  */
 public class TorrentFileReader {
 
-	public static MetainfoFile readTorrentFile(Path path) throws IOException {
+	public static Metainfo readTorrentFile(Path path) throws IOException {
 		// read file
 		byte[] bytes = Files.readAllBytes(path);
 
@@ -33,7 +33,7 @@ public class TorrentFileReader {
 		// optional elements
 		//BString comment = (BString) dictionary.get(COMMENT_ELEMENT);
 
-		return new MetainfoFile(info, DigestUtils.sha1(infoD.getBencodedBytes()), announce.getValue());
+		return new Metainfo(info, DigestUtils.sha1(infoD.getBencodedBytes()), announce.getValue());
 	}
 
 	private static AbstractInfoDictionary extractInfoDictionary(BDictionary info) {

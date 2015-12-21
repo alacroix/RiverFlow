@@ -11,7 +11,7 @@ package model.bittorrent.torrent;
  * @author Adrien Lacroix
  * @version 0.1.0
  */
-public class MetainfoFile {
+public class Metainfo {
 	/**
 	 * A dictionary that describes the file(s) of the torrent.
 	 * <p>
@@ -67,12 +67,12 @@ public class MetainfoFile {
 	 */
 	private String encoding;
 
-	public MetainfoFile(AbstractInfoDictionary info, byte[] infoSHA1, String announce) {
+	public Metainfo(AbstractInfoDictionary info, byte[] infoSHA1, String announce) {
 		this(info, infoSHA1, announce, null, null, null, null, null);
 	}
 
-	public MetainfoFile(AbstractInfoDictionary info, byte[] infoSHA1, String announce, String announceList,
-	                    Integer creationDate, String comment, String createdBy, String encoding) {
+	public Metainfo(AbstractInfoDictionary info, byte[] infoSHA1, String announce, String announceList,
+	                Integer creationDate, String comment, String createdBy, String encoding) {
 		this.info = info;
 		this.infoSHA1 = infoSHA1;
 		this.announce = announce;
@@ -93,5 +93,9 @@ public class MetainfoFile {
 
 	public int getTotalLength() {
 		return info.getTotalLength();
+	}
+
+	public AbstractInfoDictionary getInfo() {
+		return info;
 	}
 }

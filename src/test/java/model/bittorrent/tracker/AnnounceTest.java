@@ -1,7 +1,7 @@
 package model.bittorrent.tracker;
 
 import model.bittorrent.communication.Peer;
-import model.bittorrent.torrent.MetainfoFile;
+import model.bittorrent.torrent.Metainfo;
 import model.bittorrent.torrent.TorrentFileReader;
 import model.client.PeerID;
 import org.junit.Assert;
@@ -27,7 +27,7 @@ public class AnnounceTest {
 	private String createRequest() throws IOException {
 		Path file = Paths.get(RESOURCES_PATH, "ubuntu-15.10-server-amd64.iso.torrent");
 
-		MetainfoFile f = TorrentFileReader.readTorrentFile(file);
+		Metainfo f = TorrentFileReader.readTorrentFile(file);
 
 		String announce = f.getAnnounce();
 		String peerIdString = PeerID.generatePeerID();

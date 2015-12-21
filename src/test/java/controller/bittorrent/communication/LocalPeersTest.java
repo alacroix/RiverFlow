@@ -1,7 +1,7 @@
 package controller.bittorrent.communication;
 
 import model.bittorrent.communication.Peer;
-import model.bittorrent.torrent.MetainfoFile;
+import model.bittorrent.torrent.Metainfo;
 import model.bittorrent.torrent.TorrentFileReader;
 import org.junit.After;
 import org.junit.Before;
@@ -20,7 +20,7 @@ public class LocalPeersTest {
 	private static int port1 = 50000, port2 = 60000;
 
 	private PeerManager m1, m2;
-	private MetainfoFile f;
+	private Metainfo f;
 
 	private final static String RESOURCES_PATH = "src/test/resources/torrent_files/";
 

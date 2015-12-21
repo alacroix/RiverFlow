@@ -8,9 +8,9 @@ import java.nio.file.Paths;
 /**
  * @author Adrien Lacroix
  * @version 0.1.0
- * @see MetainfoFile
+ * @see Metainfo
  */
-public class MetainfoFileTest {
+public class MetainfoTest {
 
 	private final static String RESOURCES_PATH = "src/test/resources/torrent_files/";
 
