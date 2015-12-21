@@ -30,7 +30,7 @@ public class TorrentFileReader {
 		AbstractInfoDictionary info = extractInfoDictionary(infoD);
 		BString announce = (BString) master.get("announce");
 
-		// optional elements
+		// TODO: optional elements
 		//BString comment = (BString) dictionary.get(COMMENT_ELEMENT);
 
 		return new Metainfo(info, DigestUtils.sha1(infoD.getBencodedBytes()), announce.getValue());
