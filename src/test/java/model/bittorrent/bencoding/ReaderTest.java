@@ -15,7 +15,9 @@ public class ReaderTest {
 	@Test
 	public void testString() throws Exception {
 		AtomicInteger index = new AtomicInteger(0);
-		String simple = "3:foo", extended = "10:gabuzomeuh", empty = "0:";
+		String simple = "3:foo";
+		String extended = "10:gabuzomeuh";
+		String empty = "0:";
 		byte[] value = (simple + extended + empty).getBytes(StandardCharsets.UTF_8);
 
 		BString s = BString.read(value, index);
@@ -37,7 +39,9 @@ public class ReaderTest {
 	@Test
 	public void testInteger() throws Exception {
 		AtomicInteger index = new AtomicInteger(0);
-		String simple = "i3e", extended = "i123456789e", neg = "i-3e";
+		String simple = "i3e";
+		String extended = "i123456789e";
+		String neg = "i-3e";
 		byte[] value = (simple + extended + neg).getBytes(StandardCharsets.UTF_8);
 
 		BInteger s = BInteger.read(value, index);
@@ -57,7 +61,8 @@ public class ReaderTest {
 	@Test
 	public void testList() throws Exception {
 		AtomicInteger index = new AtomicInteger(0);
-		String integer = "i3e", string = "3:foo";
+		String integer = "i3e";
+		String string = "3:foo";
 		byte[] value = ("l" + integer + string + "e").getBytes(StandardCharsets.UTF_8);
 
 		BList l = BList.read(value, index);
