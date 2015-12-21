@@ -537,7 +537,7 @@ public class Message {
 				builder.append('<').append("listen-port=").append(port).append('>');
 				break;
 			default:
-				throw new RuntimeException("Not supposed to enter here");
+				throw new IllegalStateException("Non-supported type");
 		}
 
 		return builder.toString();

@@ -9,7 +9,7 @@ import java.util.Set;
  * The response includes a peer list that helps the client participate in the torrent.
  *
  * @author Adrien Lacroix
- * @version 0.1.0
+ * @version 0.2.0
  */
 public class AnnounceResponse {
 	/**
@@ -69,6 +69,8 @@ public class AnnounceResponse {
 		this.peers = peers;
 	}
 
+	/* Mandatory fields */
+
 	public String getFailureReason() {
 		return failureReason;
 	}
@@ -87,5 +89,36 @@ public class AnnounceResponse {
 
 	public Set<Peer> getPeers() {
 		return peers;
+	}
+
+	/* Optional fields */
+
+	public String getWarningMessage() {
+		return warningMessage;
+	}
+
+	public int getMinInterval() {
+		return minInterval;
+	}
+
+	public byte[] getTrackerID() {
+		return trackerID;
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder(this.getClass().getSimpleName());
+
+		// if error
+		if (failureReason != null) {
+			builder.append("<failure reason=").append(failureReason).append('>');
+		} else {
+			builder.append("<complete=").append(complete);
+			builder.append(", incomplete=").append(incomplete);
+			builder.append(", interval=").append(interval);
+			builder.append(", peers=").append(peers.size()).append('>');
+		}
+
+		return builder.toString();
 	}
 }

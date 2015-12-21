@@ -3,8 +3,8 @@ package model.bittorrent.tracker;
 import org.apache.commons.codec.net.URLCodec;
 
 import java.nio.charset.StandardCharsets;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  * By convention most trackers support another form of request,
@@ -36,13 +36,13 @@ public class ScrapeRequest {
 	 * This restricts the tracker's report to that particular torrent.
 	 * Otherwise stats for all torrents that the tracker is managing are returned.
 	 */
-	private Set<byte[]> infoHashes;
+	private Collection<byte[]> infoHashes;
 
 	public ScrapeRequest(String announceURL) {
-		this(announceURL, new HashSet<>());
+		this(announceURL, new ArrayList<>());
 	}
 
-	public ScrapeRequest(String announceURL, Set<byte[]> infoHashes) {
+	public ScrapeRequest(String announceURL, Collection<byte[]> infoHashes) {
 		int lastIndex = announceURL.lastIndexOf('/');
 		String match = "announce";
 		if (announceURL.length() > lastIndex + match.length() + 1 &&

@@ -44,4 +44,8 @@ public class SingleFileDictionary extends AbstractInfoDictionary {
 	public int getTotalLength() {
 		return length;
 	}
+
+	public String getMd5Sum() {
+		return md5Sum;
+	}
 }

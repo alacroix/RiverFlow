@@ -18,7 +18,7 @@ import java.nio.charset.StandardCharsets;
  * value of the byte. (See RFC1738 for details.)
  *
  * @author Adrien Lacroix
- * @version 0.1.0
+ * @version 0.2.0
  */
 public class AnnounceRequest {
 	/**
@@ -112,7 +112,7 @@ public class AnnounceRequest {
 	private Event event;
 	public final static String EVENT = "event";
 
-	enum Event {STARTED, STOPPED, COMPLETED}
+	public enum Event {STARTED, STOPPED, COMPLETED}
 
 	/**
 	 * Optional. The true IP address of the client machine, in dotted quad format or
@@ -139,7 +139,7 @@ public class AnnounceRequest {
 	 * <p>
 	 * This value is permitted to be zero. If omitted, typically defaults to 50 peers.
 	 */
-	private int numWant;
+	private Integer numWant;
 	public final static String NUMWANT = "numwant";
 
 	/**
@@ -159,12 +159,12 @@ public class AnnounceRequest {
 	public AnnounceRequest(String announceURL, byte[] infoHash, byte[] peerID, int port,
 	                       int uploaded, int downloaded, int left, int compact, int noPeerId, Event event) {
 		this(announceURL, infoHash, peerID, port, uploaded, downloaded, left, compact, noPeerId, event,
-				null, 0, null, null);
+				null, null, null, null);
 	}
 
 	public AnnounceRequest(String announceURL, byte[] infoHash, byte[] peerID, int port, int uploaded,
 	                       int downloaded, int left, int compact, int noPeerId, Event event, String ip,
-	                       int numWant, String key, byte[] trackerID) {
+	                       Integer numWant, String key, byte[] trackerID) {
 		this.announceURL = announceURL;
 		this.infoHash = infoHash;
 		this.peerID = peerID;
@@ -210,6 +210,22 @@ public class AnnounceRequest {
 		// event
 		if (event != null) {
 			builder.append('&').append(EVENT).append('=').append(event.toString().toLowerCase());
+		}
+		// ip
+		if (ip != null) {
+			builder.append('&').append(IP).append('=').append(ip);
+		}
+		// numWant
+		if (numWant != null) {
+			builder.append('&').append(NUMWANT).append('=').append(numWant);
+		}
+		// key
+		if (key != null) {
+			builder.append('&').append(KEY).append('=').append(key);
+		}
+		// tracker id
+		if (trackerID != null) {
+			builder.append('&').append(TRACKERID).append('=').append(new String(trackerID));
 		}
 
 		return builder.toString();

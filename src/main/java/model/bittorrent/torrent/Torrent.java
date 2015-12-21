@@ -6,7 +6,7 @@ import org.apache.commons.codec.binary.Hex;
  * Class representation of a torrent
  *
  * @author Adrien Lacroix
- * @version 0.1.0
+ * @version 0.2.0
  */
 public class Torrent {
 
@@ -36,6 +36,14 @@ public class Torrent {
 		return Hex.encodeHexString(metainfo.getInfoHash());
 	}
 
+	public void setUploaded(int uploaded) {
+		this.uploaded = uploaded;
+	}
+
+	public void setDownloaded(int downloaded) {
+		this.downloaded = downloaded;
+	}
+
 	public int getUploaded() {
 		return uploaded;
 	}
@@ -58,5 +66,22 @@ public class Torrent {
 
 	public int getPiecesNumber() {
 		return metainfo.getInfo().getPiecesNumber();
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == this) {
+			return true;
+		}
+		if (obj == null || obj.getClass() != this.getClass()) {
+			return false;
+		}
+		Torrent o = (Torrent) obj;
+		return this.getHexInfoHash().equals(o.getHexInfoHash());
+	}
+
+	@Override
+	public int hashCode() {
+		return getHexInfoHash().hashCode();
 	}
 }
