@@ -13,24 +13,29 @@ import java.util.concurrent.atomic.AtomicInteger;
  * Lists may contain any bencoded type, including integers, strings, dictionaries, and even lists within other lists.
  *
  * @author Adrien Lacroix
- * @version 0.2.0
+ * @version 0.3.0
  */
 public class BList extends ArrayList<BType> implements BType {
+
 	public final static char DELIMITER_START = 'l';
 	public final static char DELIMITER_END = 'e';
 
 	@Override
 	public String getBencodedValue() {
-		String encodedValue = "" + DELIMITER_START;
+		StringBuilder builder = new StringBuilder();
+
+		// start char
+		builder.append(DELIMITER_START);
 
 		// for each item, concat bencoded value
 		for (BType t : this) {
-			encodedValue += t.getBencodedValue();
+			builder.append(t.getBencodedValue());
 		}
 
-		encodedValue += DELIMITER_END;
+		// end char
+		builder.append(DELIMITER_END);
 
-		return encodedValue;
+		return builder.toString();
 	}
 
 	@Override
@@ -43,7 +48,7 @@ public class BList extends ArrayList<BType> implements BType {
 			try {
 				output.write(t.getBencodedBytes());
 			} catch (IOException e) {
-				System.err.println("Error during bencoding bytes");
+				throw new BException("Error during bencoding bytes");
 			}
 		}
 
@@ -58,7 +63,7 @@ public class BList extends ArrayList<BType> implements BType {
 		if (content[index.get()] == DELIMITER_START) {
 			index.set(index.get() + 1);
 		} else {
-			throw new RuntimeException("Invalid call for list");
+			throw new BException("Invalid call for list");
 		}
 
 		while (content[index.get()] != DELIMITER_END) {

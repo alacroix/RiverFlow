@@ -6,7 +6,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * Read a bencoded type
  *
  * @author Adrien Lacroix
- * @version 0.2.0
+ * @version 0.3.0
  */
 public class Reader {
 
@@ -30,7 +30,7 @@ public class Reader {
 			case BDictionary.DELIMITER_START:
 				return BDictionary.read(bytes, index);
 			default:
-				throw new RuntimeException("Unknown bencoded type : " + bytes[index.get()]);
+				throw new BException("Unknown bencoded type : " + bytes[index.get()]);
 		}
 	}
 }

@@ -17,23 +17,29 @@ import java.util.concurrent.atomic.AtomicInteger;
  * The strings should be compared using a binary comparison, not a culture-specific "natural" comparison.
  *
  * @author Adrien Lacroix
- * @version 0.2.0
+ * @version 0.3.0
  */
 public class BDictionary extends TreeMap<String, BType> implements BType {
+
 	public final static char DELIMITER_START = 'd';
 	public final static char DELIMITER_END = 'e';
 
 	@Override
 	public String getBencodedValue() {
-		String encodedValue = "" + DELIMITER_START;
+		StringBuilder builder = new StringBuilder();
+		// start char
+		builder.append(DELIMITER_START);
 
 		// for each item, concat bencoded value
 		for (Map.Entry<String, BType> entry : this.entrySet()) {
-			encodedValue += new BString(entry.getKey()).getBencodedValue();
-			encodedValue += entry.getValue().getBencodedValue();
+			builder.append(new BString(entry.getKey()).getBencodedValue());
+			builder.append(entry.getValue().getBencodedValue());
 		}
 
-		return encodedValue + DELIMITER_END;
+		// end char
+		builder.append(DELIMITER_END);
+
+		return builder.toString();
 	}
 
 	@Override
@@ -48,7 +54,7 @@ public class BDictionary extends TreeMap<String, BType> implements BType {
 				output.write(new BString(entry.getKey()).getBencodedBytes());
 				output.write(entry.getValue().getBencodedBytes());
 			} catch (IOException e) {
-				System.err.println("Error during bencoding bytes");
+				throw new BException("Error during bencoding bytes");
 			}
 		}
 
@@ -63,7 +69,7 @@ public class BDictionary extends TreeMap<String, BType> implements BType {
 		if (content[index.get()] == DELIMITER_START) {
 			index.set(index.get() + 1);
 		} else {
-			throw new RuntimeException("Invalid call for dictionary");
+			throw new BException("Invalid call for dictionary");
 		}
 
 		while (content[index.get()] != DELIMITER_END) {

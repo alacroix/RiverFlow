@@ -14,7 +14,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * Note that there is no constant beginning delimiter, and no ending delimiter.
  *
  * @author Adrien Lacroix
- * @version 0.2.0
+ * @version 0.3.0
  */
 public class BString implements BType {
 	private String value;
@@ -53,7 +53,7 @@ public class BString implements BType {
 				output.write(':');
 				output.write(decoded);
 			} catch (IOException e) {
-				System.err.println("Error during bencoding bytes");
+				throw new BException("Error during bencoding bytes");
 			}
 			return output.toByteArray();
 		} else {
