@@ -472,6 +472,8 @@ public class Message {
 				case PORT:
 					output.write(shortToBytesArray((short) port));
 					break;
+				default:
+					throw new IllegalStateException("Non-supported type");
 			}
 
 		} catch (IOException e) {

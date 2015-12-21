@@ -24,7 +24,7 @@ public class MessageTest {
 		Message m = Message.handshake(infoHash, new String(peerID));
 		Assert.assertEquals(MessageType.HANDSHAKE, m.getType());
 		byte[] mb = m.toBytes();
-		Assert.assertEquals(49 + 19, mb.length);
+		Assert.assertEquals(MessageType.HANDSHAKE.getLengthPrefix(), mb.length);
 
 		Message m2 = Message.decode(mb);
 		Assert.assertEquals(MessageType.HANDSHAKE, m2.getType());
