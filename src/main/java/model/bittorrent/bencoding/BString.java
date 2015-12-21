@@ -65,7 +65,6 @@ public class BString implements BType {
 		// get index of separator
 		final int sepIndex = ArrayUtils.indexOf(content, (byte) ':', index.get());
 		// get length of string
-		// TODO: Improve the cast (ByteBuffer ?)
 		String lengthS = new String(ArrayUtils.subarray(content, index.get(), sepIndex),
 				StandardCharsets.UTF_8);
 		final int length = Integer.valueOf(lengthS);

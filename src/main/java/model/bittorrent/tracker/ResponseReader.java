@@ -44,7 +44,7 @@ public class ResponseReader {
 			int incomplete = ((BInteger) rd.get(INCOMPLETE)).getValue();
 			int interval = ((BInteger) rd.get(INTERVAL)).getValue();
 
-			// peers in compact mode TODO: non-compact mode
+			// peers in compact mode
 			BString peersObject = (BString) rd.get(PEERS);
 			Set<Peer> peers = decodePeers(Base64.getDecoder().decode(peersObject.getValue()));
 

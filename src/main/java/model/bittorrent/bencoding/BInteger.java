@@ -41,7 +41,6 @@ public class BInteger implements BType {
 		// get index of integer's end
 		final int indexEnd = ArrayUtils.indexOf(content, (byte) 'e', index.get());
 		// get length of string
-		// TODO: Improve the cast (ByteBuffer ?)
 		String valueS = new String(ArrayUtils.subarray(content, index.get() + 1, indexEnd),
 				StandardCharsets.UTF_8);
 		final int value = Integer.valueOf(valueS);
