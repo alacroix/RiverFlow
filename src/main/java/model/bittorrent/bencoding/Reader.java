@@ -6,9 +6,12 @@ import java.util.concurrent.atomic.AtomicInteger;
  * Read a bencoded type
  *
  * @author Adrien Lacroix
- * @version 0.3.0
+ * @version 0.4.0
  */
-public class Reader {
+public final class Reader {
+
+	private Reader() {
+	}
 
 	public static BType read(byte[] bytes, AtomicInteger index) {
 		switch (bytes[index.get()]) {
