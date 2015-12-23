@@ -1,7 +1,7 @@
 package controller.bittorrent.tracker;
 
 import model.bittorrent.torrent.Torrent;
-import model.bittorrent.torrent.TorrentFileReader;
+import model.bittorrent.torrent.TorrentReader;
 import model.bittorrent.tracker.AnnounceResponse;
 import model.bittorrent.tracker.ScrapeResponse;
 import org.junit.Assert;
@@ -29,7 +29,7 @@ public class TrackerManagerTest {
 	public void setUp() throws Exception {
 		// get torrent
 		Path file = Paths.get(RESOURCES_PATH, "ubuntu-15.10-server-amd64.iso.torrent");
-		torrent = TorrentFileReader.readTorrentFile(file);
+		torrent = TorrentReader.readTorrentFile(file);
 		// init manager
 		manager = new TrackerManager();
 	}

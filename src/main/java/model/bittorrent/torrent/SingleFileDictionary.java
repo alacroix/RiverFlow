@@ -20,15 +20,6 @@ public class SingleFileDictionary extends AbstractInfoDictionary {
 	 */
 	private String md5Sum;
 
-	public SingleFileDictionary(String name, Integer pieceLength, String pieces, Integer length) {
-		this(name, pieceLength, pieces, length, null);
-	}
-
-	public SingleFileDictionary(String name, Integer pieceLength, String pieces, Integer length,
-	                            String md5Sum) {
-		this(name, pieceLength, pieces, length, md5Sum, null);
-	}
-
 	public SingleFileDictionary(String name, Integer pieceLength, String pieces, Integer length,
 	                            String md5Sum, Integer privateTracker) {
 		super(name, pieceLength, pieces, privateTracker);

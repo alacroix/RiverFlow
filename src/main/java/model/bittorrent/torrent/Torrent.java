@@ -2,6 +2,9 @@ package model.bittorrent.torrent;
 
 import org.apache.commons.codec.binary.Hex;
 
+import java.time.Instant;
+import java.util.List;
+
 /**
  * Class representation of a torrent
  *
@@ -24,6 +27,12 @@ public class Torrent {
 		this.bitField = new byte[bitFieldSize];
 	}
 
+	/* Metainfo getters */
+
+	public AbstractInfoDictionary.Mode getMode() {
+		return metainfo.getInfo().getMode();
+	}
+
 	public String getAnnounce() {
 		return metainfo.getAnnounce();
 	}
@@ -35,6 +44,48 @@ public class Torrent {
 	public String getHexInfoHash() {
 		return Hex.encodeHexString(metainfo.getInfoHash());
 	}
+
+	public boolean hasAnnounceList() {
+		return metainfo.getAnnounceList() != null;
+	}
+
+	public List<List<String>> getAnnounceList() {
+		return metainfo.getAnnounceList();
+	}
+
+	public boolean hasCreationDate() {
+		return metainfo.getCreationDate() != null;
+	}
+
+	public Instant getCreationDate() {
+		return metainfo.getCreationDate();
+	}
+
+	public boolean hasComment() {
+		return metainfo.getComment() != null;
+	}
+
+	public String getComment() {
+		return metainfo.getComment();
+	}
+
+	public boolean hasAuthor() {
+		return metainfo.getCreatedBy() != null;
+	}
+
+	public String getAuthor() {
+		return metainfo.getCreatedBy();
+	}
+
+	public boolean hasEncoding() {
+		return metainfo.getEncoding() != null;
+	}
+
+	public String getEncoding() {
+		return metainfo.getEncoding();
+	}
+
+	/* Torrent getters */
 
 	public void setUploaded(int uploaded) {
 		this.uploaded = uploaded;
@@ -68,6 +119,8 @@ public class Torrent {
 		return metainfo.getInfo().getPiecesNumber();
 	}
 
+	/* Overriding */
+
 	@Override
 	public boolean equals(Object obj) {
 		if (obj == this) {
@@ -83,5 +136,49 @@ public class Torrent {
 	@Override
 	public int hashCode() {
 		return getHexInfoHash().hashCode();
+	}
+
+	@Override
+	public String toString() {
+		String padding = "";
+		for (int i = 0; i < this.getClass().getSimpleName().length() + 1; i++) {
+			padding += " ";
+		}
+
+		StringBuilder builder = new StringBuilder(this.getClass().getSimpleName());
+
+		// info hash
+		builder.append("<info hash=").append(getHexInfoHash());
+		// announce
+		builder.append(",\n").append(padding);
+		builder.append("announce=").append(getAnnounce());
+		// announce list
+		if (hasAnnounceList()) {
+			builder.append(",\n").append(padding);
+			builder.append("announce list=").append(getAnnounceList());
+		}
+		// creation date
+		if (hasCreationDate()) {
+			builder.append(",\n").append(padding);
+			builder.append("creation date=").append(getCreationDate());
+		}
+		// comment
+		if (hasComment()) {
+			builder.append(",\n").append(padding);
+			builder.append("comment=").append(getComment());
+		}
+		// author
+		if (hasAuthor()) {
+			builder.append(",\n").append(padding);
+			builder.append("created by=").append(getAuthor());
+		}
+		// encoding
+		if (hasEncoding()) {
+			builder.append(",\n").append(padding);
+			builder.append("encoding=").append(getEncoding());
+		}
+		builder.append('>');
+
+		return builder.toString();
 	}
 }

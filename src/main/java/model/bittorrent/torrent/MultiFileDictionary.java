@@ -12,10 +12,6 @@ public class MultiFileDictionary extends AbstractInfoDictionary {
 	 */
 	private List<FileKeys> files;
 
-	public MultiFileDictionary(String name, Integer pieceLength, String pieces, List<FileKeys> files) {
-		this(name, pieceLength, pieces, files, null);
-	}
-
 	public MultiFileDictionary(String name, Integer pieceLength, String pieces, List<FileKeys> files,
 	                           Integer privateTracker) {
 		super(name, pieceLength, pieces, privateTracker);

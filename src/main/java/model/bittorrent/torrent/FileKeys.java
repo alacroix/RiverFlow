@@ -27,10 +27,6 @@ public class FileKeys {
 	 */
 	private String md5Sum;
 
-	public FileKeys(Integer length, List<String> path) {
-		this(length, path, null);
-	}
-
 	public FileKeys(Integer length, List<String> path, String md5Sum) {
 		this.length = length;
 		this.path = path;
