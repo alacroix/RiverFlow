@@ -3,7 +3,6 @@ package model.bittorrent.tracker;
 import org.apache.commons.codec.net.URLCodec;
 
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.Collection;
 
 /**
@@ -37,10 +36,6 @@ public class ScrapeRequest {
 	 * Otherwise stats for all torrents that the tracker is managing are returned.
 	 */
 	private Collection<byte[]> infoHashes;
-
-	public ScrapeRequest(String announceURL) {
-		this(announceURL, new ArrayList<>());
-	}
 
 	public ScrapeRequest(String announceURL, Collection<byte[]> infoHashes) {
 		int lastIndex = announceURL.lastIndexOf('/');
