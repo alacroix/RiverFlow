@@ -36,7 +36,7 @@ public class TrackerManagerTest {
 
 	@Test
 	public void testGetAnnounceForTorrent() throws Exception {
-		AnnounceResponse response = manager.getAnnounceForTorrent(torrent);
+		AnnounceResponse response = manager.getAnnounceForTorrent(torrent, null);
 		Assert.assertNotNull(response);
 		System.out.println(response);
 	}

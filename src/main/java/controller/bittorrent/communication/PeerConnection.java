@@ -87,6 +87,7 @@ public class PeerConnection {
 
 		// etablish connection
 		socket = new Socket(peer.getIp(), peer.getPort());
+		socket.setSoTimeout(1000);
 
 		// send handshake
 		BufferedOutputStream out = new BufferedOutputStream(socket.getOutputStream());
@@ -99,14 +100,31 @@ public class PeerConnection {
 		InputStream in = socket.getInputStream();
 		ByteArrayOutputStream aBytes = new ByteArrayOutputStream();
 		while (aBytes.size() != MessageType.HANDSHAKE.getLengthPrefix()) {
-			aBytes.write(in.read());
+			int val = in.read();
+			if (val == -1) {
+				break;
+			}
+			aBytes.write(val);
 		}
+
+		// if incomplete message, close
+		if (aBytes.size() != MessageType.HANDSHAKE.getLengthPrefix()) {
+			System.err.println("not good size: " + aBytes.size());
+			close();
+			return;
+		}
+
+		// decode message
 		Message answer = Message.decode(aBytes.toByteArray());
 
 		// if not handshake, close
 		if (answer.getType() != MessageType.HANDSHAKE) {
+			System.err.println("not handshake");
 			close();
+			return;
 		}
+
+		System.err.println(answer);
 
 		// check peer id
 		if (peer.getPeerID().equals(Peer.PEER_ID_DEFAULT)) {

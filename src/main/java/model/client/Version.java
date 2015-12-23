@@ -17,8 +17,4 @@ public class Version {
 
 	private Version() {
 	}
-
-	public static String print() {
-		return NAME + " v" + MAJOR + '.' + MINOR + '.' + CHANGE;
-	}
 }

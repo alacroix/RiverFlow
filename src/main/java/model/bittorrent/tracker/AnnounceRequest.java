@@ -1,5 +1,6 @@
 package model.bittorrent.tracker;
 
+import model.bittorrent.torrent.Torrent;
 import org.apache.commons.codec.net.URLCodec;
 
 import java.nio.charset.StandardCharsets;
@@ -156,22 +157,19 @@ public class AnnounceRequest {
 	private byte[] trackerID;
 	public final static String TRACKERID = "trackerid";
 
-	public AnnounceRequest(String announceURL, byte[] infoHash, byte[] peerID, int port,
-	                       int uploaded, int downloaded, int left, int compact, int noPeerId, Event event) {
-		this(announceURL, infoHash, peerID, port, uploaded, downloaded, left, compact, noPeerId, event,
-				null, null, null, null);
+	public AnnounceRequest(Torrent torrent, byte[] peerID, int port, int compact, int noPeerId, Event event) {
+		this(torrent, peerID, port, compact, noPeerId, event, null, 10, null, null);
 	}
 
-	public AnnounceRequest(String announceURL, byte[] infoHash, byte[] peerID, int port, int uploaded,
-	                       int downloaded, int left, int compact, int noPeerId, Event event, String ip,
+	public AnnounceRequest(Torrent torrent, byte[] peerID, int port, int compact, int noPeerId, Event event, String ip,
 	                       Integer numWant, String key, byte[] trackerID) {
-		this.announceURL = announceURL;
-		this.infoHash = infoHash;
+		this.announceURL = torrent.getAnnounce();
+		this.infoHash = torrent.getInfoHash();
 		this.peerID = peerID;
 		this.port = port;
-		this.uploaded = uploaded;
-		this.downloaded = downloaded;
-		this.left = left;
+		this.uploaded = torrent.getUploaded();
+		this.downloaded = torrent.getDownloaded();
+		this.left = torrent.getLeft();
 		this.compact = compact;
 		this.noPeerId = noPeerId;
 		this.event = event;

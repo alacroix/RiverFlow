@@ -14,7 +14,7 @@ import java.nio.charset.StandardCharsets;
  */
 public class Message {
 
-	public final static String HANDSHAKE_PSTR = "BitTorrent Protocol";
+	public final static String HANDSHAKE_PSTR = "BitTorrent protocol";
 
 	/**
 	 * four byte big-endian value
@@ -413,7 +413,7 @@ public class Message {
 
 		// if handshake
 		if (type == MessageType.HANDSHAKE) {
-			byte[] pstr = "BitTorrent Protocol".getBytes(StandardCharsets.UTF_8);
+			byte[] pstr = HANDSHAKE_PSTR.getBytes(StandardCharsets.UTF_8);
 			byte[] reserved = new byte[8];
 
 			try {
@@ -491,7 +491,7 @@ public class Message {
 
 		// if handshake
 		if (type == MessageType.HANDSHAKE) {
-			String pstr = "BitTorrent Protocol";
+			String pstr = HANDSHAKE_PSTR;
 			String reserved = "00000000";
 
 			builder.append("<pstrlen=").append(pstr.length()).append('>');

@@ -15,7 +15,7 @@ public enum MessageType {
 	PIECE(9, 7),
 	CANCEL(13, 8),
 	PORT(3, 9),
-	HANDSHAKE(49 + Message.HANDSHAKE_PSTR.length()),
+	HANDSHAKE(20 + 20 + 8 + 1 + Message.HANDSHAKE_PSTR.length()),
 	KEEP_ALIVE(0);
 
 	private int lengthPrefix;
@@ -61,7 +61,7 @@ public enum MessageType {
 			case 9:
 				return PORT;
 			default:
-				throw new IllegalArgumentException("Invalid MessageType id");
+				throw new IllegalArgumentException("Invalid MessageType id: " + id);
 		}
 	}
 }

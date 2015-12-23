@@ -46,22 +46,10 @@ public class TrackerManager {
 		return IOUtils.toByteArray(in);
 	}
 
-	public AnnounceResponse getAnnounceForTorrent(Torrent torrent) {
-		AnnounceRequest.Event event = null;
-
-		/*
-		if (torrent.getDownloaded() == 0) {
-			event = AnnounceRequest.Event.STARTED;
-		}
-		if (torrent.getLeft() == 0) {
-			event = AnnounceRequest.Event.COMPLETED;
-		}
-		*/
-
-		AnnounceRequest request = new AnnounceRequest(torrent.getAnnounce(),
-				torrent.getInfoHash(), PeerID.generatePeerID().getBytes(StandardCharsets.UTF_8),
-				6800, torrent.getUploaded(), torrent.getDownloaded(),
-				torrent.getLeft(), 1, 0, event);
+	public AnnounceResponse getAnnounceForTorrent(Torrent torrent, AnnounceRequest.Event event) {
+		AnnounceRequest request = new AnnounceRequest(torrent,
+				PeerID.generatePeerID().getBytes(StandardCharsets.UTF_8),
+				6800, 1, 0, event);
 
 		byte[] response;
 		try {

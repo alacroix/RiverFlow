@@ -1,12 +1,15 @@
 package controller.bittorrent.communication;
 
+import controller.bittorrent.BitTorrentManager;
 import model.bittorrent.communication.Message;
 import model.bittorrent.communication.Peer;
+import model.bittorrent.tracker.AnnounceResponse;
 import model.client.PeerID;
 
 import java.io.IOException;
 import java.net.Socket;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 /**
@@ -15,19 +18,19 @@ import java.util.Set;
  */
 public class PeerManager {
 
-	private HashSet<Peer> peers;
+	private BitTorrentManager manager;
+
+	private Set<Peer> peers;
 
 	private Set<PeerConnection> peerConnections;
 
 	private String peerID;
 
-	private int port;
-
 	private PeerListener listener;
 
-	public PeerManager(HashSet<Peer> peers, int port) {
-		this.peers = peers;
-		this.port = port;
+	public PeerManager(BitTorrentManager manager, int port) {
+		this.manager = manager;
+		this.peers = new HashSet<>();
 		this.peerID = PeerID.generatePeerID();
 
 		this.peerConnections = new HashSet<>();
@@ -35,7 +38,16 @@ public class PeerManager {
 		this.listener = new PeerListener(this, port);
 		// initialize listening on another thread
 		listener.start();
+	}
 
+	public void updatePeers(AnnounceResponse response) {
+		for (Peer peer : response.getPeers()) {
+			peers.add(peer);
+		}
+	}
+
+	public Set<Peer> getPeers() {
+		return peers;
 	}
 
 	public void connectTo(Peer peer, byte[] infoHash) {
@@ -44,7 +56,7 @@ public class PeerManager {
 			c.connect(generateHandshake(infoHash));
 			peerConnections.add(c);
 		} catch (IOException e) {
-			System.err.println("Failed to connect to " + peer);
+			System.err.println("Failed to connect to " + peer + e.getMessage());
 		}
 	}
 
@@ -59,8 +71,21 @@ public class PeerManager {
 	}
 
 	public Message generateHandshake(byte[] infoHash) {
-		// TODO: check if client has info hash, else return null
-		return Message.handshake(infoHash, peerID);
+		return manager.getTorrentManager().hasTorrent(infoHash) ?
+				Message.handshake(infoHash, peerID) : null;
+	}
+
+	public void closeAllConnections() {
+		Iterator<PeerConnection> it = peerConnections.iterator();
+		while (it.hasNext()) {
+			PeerConnection connection = it.next();
+			try {
+				connection.close();
+			} catch (IOException e) {
+				System.err.println("Failed to close connection with " + connection.getPeer());
+			}
+			it.remove();
+		}
 	}
 
 	public void setListening(boolean listening) {
