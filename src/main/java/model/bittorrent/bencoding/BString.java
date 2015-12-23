@@ -86,7 +86,7 @@ public class BString implements BType {
 		BString n = new BString(value);
 
 		// if loss of characters (ex: sha1)
-		boolean hasToBeEncoded = (n.getValue().length() != val.length);
+		boolean hasToBeEncoded = n.getValue().length() != val.length;
 
 		// if special chars
 		for (byte b : val) {
