@@ -14,9 +14,18 @@ import java.util.concurrent.atomic.AtomicInteger;
  * Utils class to read torrent file
  *
  * @author Adrien Lacroix
- * @version 0.2.0
+ * @version 0.3.0
  */
-public class TorrentFileReader {
+public class TorrentReader {
+
+	private final static String INFO = "info";
+
+	private final static String ANNOUNCE = "announce";
+	private final static String ANNOUNCE_LIST = "announce-list";
+	private final static String CREATION_DATE = "creation date";
+	private final static String COMMENT = "comment";
+	private final static String CREATED_BY = "created by";
+	private final static String ENCODING = "encoding";
 
 	public static Torrent readTorrentFile(Path path) throws IOException {
 		// read file
@@ -24,16 +33,45 @@ public class TorrentFileReader {
 
 		final AtomicInteger index = new AtomicInteger(0);
 		BDictionary master = (BDictionary) Reader.read(bytes, index);
-		BDictionary infoD = (BDictionary) master.get("info");
 
 		// mandatory elements
+		BDictionary infoD = (BDictionary) master.get(INFO);
 		AbstractInfoDictionary info = extractInfoDictionary(infoD);
-		BString announce = (BString) master.get("announce");
+		BString announce = (BString) master.get(ANNOUNCE);
 
-		// TODO: optional elements
-		//BString comment = (BString) dictionary.get(COMMENT_ELEMENT);
+		// optional elements
+		List<List<String>> announceList = null;
+		if (master.containsKey(ANNOUNCE_LIST)) {
+			announceList = new ArrayList<>();
+			List<BType> firstList = (BList) master.get(ANNOUNCE_LIST);
+			for (int i = 0; i < firstList.size(); i++) {
+				announceList.add(i, new ArrayList<>());
+				BList secondList = (BList) firstList.get(i);
+				for (BType t : secondList) {
+					BString s = (BString) t;
+					announceList.get(i).add(s.getValue());
+				}
+			}
+		}
+		Integer creationDate = null;
+		if (master.containsKey(CREATION_DATE)) {
+			creationDate = ((BInteger) master.get(CREATION_DATE)).getValue();
+		}
+		String comment = null;
+		if (master.containsKey(COMMENT)) {
+			comment = ((BString) master.get(COMMENT)).getValue();
+		}
+		String createdBy = null;
+		if (master.containsKey(CREATED_BY)) {
+			createdBy = ((BString) master.get(CREATED_BY)).getValue();
+		}
+		String encoding = null;
+		if (master.containsKey(ENCODING)) {
+			encoding = ((BString) master.get(ENCODING)).getValue();
+		}
 
-		Metainfo metainfo = new Metainfo(info, DigestUtils.sha1(infoD.getBencodedBytes()), announce.getValue());
+		Metainfo metainfo = new Metainfo(info, DigestUtils.sha1(infoD.getBencodedBytes()), announce.getValue(),
+				announceList, creationDate, comment, createdBy, encoding);
 
 		return new Torrent(metainfo);
 	}

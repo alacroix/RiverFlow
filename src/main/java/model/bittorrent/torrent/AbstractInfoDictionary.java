@@ -1,5 +1,8 @@
 package model.bittorrent.torrent;
 
+import org.apache.commons.lang3.ArrayUtils;
+
+import java.util.Arrays;
 import java.util.Base64;
 
 /**
@@ -44,10 +47,6 @@ public abstract class AbstractInfoDictionary {
 	 */
 	private Integer privateTracker;
 
-	public AbstractInfoDictionary(String name, Integer pieceLength, String pieces) {
-		this(name, pieceLength, pieces, null);
-	}
-
 	public AbstractInfoDictionary(String name, Integer pieceLength, String pieces, Integer privateTracker) {
 		this.name = name;
 		this.pieceLength = pieceLength;
@@ -70,7 +69,12 @@ public abstract class AbstractInfoDictionary {
 		return name;
 	}
 
+	public Integer getPrivateTracker() {
+		return privateTracker;
+	}
+
 	public boolean isValidPiece(byte[] sha1, int index) {
-		return false;
+		int startIndex = 20 * index;
+		return Arrays.equals(sha1, ArrayUtils.subarray(pieces, startIndex, startIndex + 20));
 	}
 }

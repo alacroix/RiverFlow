@@ -1,5 +1,8 @@
 package model.bittorrent.torrent;
 
+import java.time.Instant;
+import java.util.List;
+
 /**
  * All data in a metainfo file is bencoded. The specification for bencoding is defined above.
  * <p>
@@ -9,7 +12,7 @@ package model.bittorrent.torrent;
  * All character string values are UTF-8 encoded.
  *
  * @author Adrien Lacroix
- * @version 0.1.0
+ * @version 0.2.0
  */
 public class Metainfo {
 	/**
@@ -36,7 +39,7 @@ public class Metainfo {
 	 * this is an extention to the official specification,
 	 * offering backwards-compatibility. (list of lists of strings)
 	 */
-	private String announceList;
+	private List<List<String>> announceList;
 
 	/**
 	 * (optional)
@@ -44,7 +47,7 @@ public class Metainfo {
 	 * the creation time of the torrent, in standard UNIX
 	 * epoch format (integer, seconds since 1-Jan-1970 00:00:00 UTC)
 	 */
-	private Integer creationDate;
+	private Instant creationDate;
 
 	/**
 	 * (optional)
@@ -71,13 +74,15 @@ public class Metainfo {
 		this(info, infoSHA1, announce, null, null, null, null, null);
 	}
 
-	public Metainfo(AbstractInfoDictionary info, byte[] infoSHA1, String announce, String announceList,
+	public Metainfo(AbstractInfoDictionary info, byte[] infoSHA1, String announce, List<List<String>> announceList,
 	                Integer creationDate, String comment, String createdBy, String encoding) {
 		this.info = info;
 		this.infoSHA1 = infoSHA1;
 		this.announce = announce;
 		this.announceList = announceList;
-		this.creationDate = creationDate;
+		if (creationDate != null) {
+			this.creationDate = Instant.ofEpochSecond(creationDate);
+		}
 		this.comment = comment;
 		this.createdBy = createdBy;
 		this.encoding = encoding;
@@ -87,8 +92,28 @@ public class Metainfo {
 		return announce;
 	}
 
+	public List<List<String>> getAnnounceList() {
+		return announceList;
+	}
+
 	public byte[] getInfoHash() {
 		return infoSHA1;
+	}
+
+	public Instant getCreationDate() {
+		return creationDate;
+	}
+
+	public String getComment() {
+		return comment;
+	}
+
+	public String getCreatedBy() {
+		return createdBy;
+	}
+
+	public String getEncoding() {
+		return encoding;
 	}
 
 	public int getTotalLength() {
@@ -98,4 +123,5 @@ public class Metainfo {
 	public AbstractInfoDictionary getInfo() {
 		return info;
 	}
+
 }
